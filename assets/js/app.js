@@ -28,6 +28,12 @@
     return isNaN(v) ? null : v;
   }
 
+  // Translation helper for JS-generated strings. Falls back to the key itself
+  // so a missing entry degrades to a readable token rather than "undefined".
+  function T(key, vars) {
+    return (window.SM && window.SM.T) ? window.SM.T(key, vars) : key;
+  }
+
   /* ======================================================================
      ROUTER
      ====================================================================== */
@@ -73,27 +79,27 @@
   // 1 · Hole diameter
   function calcHole() {
     var lead = num("#hd-lead");
-    if (lead === null) { $("#hd-result").innerHTML = row("Enter a lead diameter", "—"); return; }
+    if (lead === null) { $("#hd-result").innerHTML = row(T("c1.enterLead"), "—"); return; }
     var unguided = $("#hd-type").value === "unguided";
     var offset = unguided ? 0.58 : 0.48;
     var target = lead + offset;
     var lo = target - 0.08, hi = target + 0.08;
     var html = "";
-    html += row("Rule applied", unguided ? "Lead + 0.58 mm ± 0.08" : "Lead + 0.48 mm ± 0.08");
-    html += row("Required hole diameter", fmt(target, 3) + " mm");
-    html += row("Acceptable window", fmt(lo, 3) + " – " + fmt(hi, 3) + " mm");
-    html += row("Imperial equivalent", fmt(target / 25.4, 4) + " in");
+    html += row(T("c1.rule"), unguided ? T("c1.ruleUnguided") : T("c1.ruleGuided"));
+    html += row(T("c1.reqDia"), fmt(target, 3) + " mm");
+    html += row(T("c1.window"), fmt(lo, 3) + " – " + fmt(hi, 3) + " mm");
+    html += row(T("c1.imperial"), fmt(target / 25.4, 4) + " in");
 
     var actual = num("#hd-actual");
     if (actual !== null && actual > 0) {
       var delta = actual - target;
-      html += row("Your drilled diameter", fmt(actual, 3) + " mm");
+      html += row(T("c1.yourDia"), fmt(actual, 3) + " mm");
       if (Math.abs(delta) <= 0.08) {
-        html += row("Verdict", "In specification", "ok");
+        html += row(T("verdict"), T("c1.inSpec"), "ok");
       } else if (delta < 0) {
-        html += row("Verdict", "Undersize by " + fmt(Math.abs(delta), 3) + " mm — expect insertion faults", "bad");
+        html += row(T("verdict"), T("c1.under", { d: fmt(Math.abs(delta), 3) }), "bad");
       } else {
-        html += row("Verdict", "Oversize by " + fmt(delta, 3) + " mm — loose component, weak clinch", "bad");
+        html += row(T("verdict"), T("c1.over", { d: fmt(delta, 3) }), "bad");
       }
     }
     $("#hd-result").innerHTML = html;
@@ -101,36 +107,36 @@
 
   // 2 · Axial minimum hole span
   var TOOL = {
-    "std":   { m: 1.112, c: 2.36, name: "Standard tooling" },
-    "large": { m: 1.085, c: 4.11, name: "Large lead tooling" },
-    "5":     { m: 1.109, c: 1.40, name: "5 mm tooling" },
-    "5.5":   { m: 1.067, c: 2.30, name: "5.5 mm tooling" }
+    "std":   { m: 1.112, c: 2.36, name: "tool.std" },
+    "large": { m: 1.085, c: 4.11, name: "tool.large" },
+    "5":     { m: 1.109, c: 1.40, name: "tool.5" },
+    "5.5":   { m: 1.067, c: 2.30, name: "tool.55" }
   };
   function calcSpan() {
     var L = num("#as-len"), lead = num("#as-lead");
-    if (L === null || lead === null) { $("#as-result").innerHTML = row("Enter body length and lead diameter", "—"); return; }
+    if (L === null || lead === null) { $("#as-result").innerHTML = row(T("c2.enter"), "—"); return; }
     var t = TOOL[$("#as-tool").value];
     var eff = $("#as-sym").value === "nonsym" ? L - 0.41 : L;
     var span = (eff * t.m + t.c) - lead;
 
     var html = "";
-    html += row("Tooling", t.name);
-    html += row("Effective body length", fmt(eff, 3) + " mm" + (eff !== L ? " (non-symmetric correction)" : ""));
-    html += row("Minimum hole span", fmt(span, 3) + " mm", "ok");
-    html += row("Design target (min + 10%)", fmt(span * 1.1, 3) + " mm");
-    html += row("Imperial minimum", fmt(span / 25.4, 4) + " in");
+    html += row(T("c2.tooling"), T(t.name));
+    html += row(T("c2.effLen"), fmt(eff, 3) + " mm" + (eff !== L ? " " + T("c2.nonsym") : ""));
+    html += row(T("c2.minSpan"), fmt(span, 3) + " mm", "ok");
+    html += row(T("c2.target"), fmt(span * 1.1, 3) + " mm");
+    html += row(T("c2.imperialMin"), fmt(span / 25.4, 4) + " in");
 
-    if (span < 5) html += row("Note", "Span under 5 mm — max lead dia 0.61 mm, max body dia 2.29 mm", "bad");
+    if (span < 5) html += row(T("note"), T("c2.smallSpan"), "bad");
 
     var actual = num("#as-actual");
     if (actual !== null && actual > 0) {
-      html += row("Your actual span", fmt(actual, 3) + " mm");
+      html += row(T("c2.yourSpan"), fmt(actual, 3) + " mm");
       if (actual < span) {
-        html += row("Verdict", "Below minimum by " + fmt(span - actual, 3) + " mm — body damage risk", "bad");
+        html += row(T("verdict"), T("c2.below", { d: fmt(span - actual, 3) }), "bad");
       } else if (actual < span * 1.05) {
-        html += row("Verdict", "Marginal — within 5% of minimum, lot variation may fail", "bad");
+        html += row(T("verdict"), T("c2.marginal"), "bad");
       } else {
-        html += row("Verdict", "Acceptable", "ok");
+        html += row(T("verdict"), T("ok"), "ok");
       }
     }
     $("#as-result").innerHTML = html;
@@ -140,25 +146,25 @@
   var PITCH = { "2.5": null, "5.0": 4.5, "7.5": 7.04, "10.0": 9.58 };
   function calcRadial() {
     var p = $("#rs-pitch").value, lead = num("#rs-lead");
-    if (lead === null) { $("#rs-result").innerHTML = row("Enter a lead diameter", "—"); return; }
+    if (lead === null) { $("#rs-result").innerHTML = row(T("c3.enter"), "—"); return; }
     var add = PITCH[p];
     var span = add === null ? 2.54 : lead + add;
     var html = "";
-    html += row("Component pitch", p + " mm");
-    html += row("Rule", add === null ? "Fixed 2.54 mm span" : "Lead dia + " + add + " mm");
-    html += row("Recommended hole span", fmt(span, 3) + " mm", "ok");
-    html += row("Imperial equivalent", fmt(span / 25.4, 4) + " in");
+    html += row(T("c3.pitch"), p + " mm");
+    html += row(T("c3.rule"), add === null ? T("c3.fixed") : T("c3.leadPlus", { d: add }));
+    html += row(T("c3.recSpan"), fmt(span, 3) + " mm", "ok");
+    html += row(T("c1.imperial"), fmt(span / 25.4, 4) + " in");
 
     var actual = num("#rs-actual");
     if (actual !== null && actual > 0) {
       var d = actual - span;
-      html += row("Your PCB hole span", fmt(actual, 3) + " mm");
+      html += row(T("c3.yourSpan"), fmt(actual, 3) + " mm");
       if (Math.abs(d) <= 0.15) {
-        html += row("Verdict", "Matched — runs as-is", "ok");
+        html += row(T("verdict"), T("c3.matched"), "ok");
       } else if (d < 0) {
-        html += row("Verdict", "Pitch too tight by " + fmt(Math.abs(d), 3) + " mm — adapt panel or change component pitch", "bad");
+        html += row(T("verdict"), T("c3.tight", { d: fmt(Math.abs(d), 3) }), "bad");
       } else {
-        html += row("Verdict", "Pitch wider than required by " + fmt(d, 3) + " mm — verify tooling coverage", "bad");
+        html += row(T("verdict"), T("c3.wide", { d: fmt(d, 3) }), "bad");
       }
     }
     $("#rs-result").innerHTML = html;
@@ -167,20 +173,20 @@
   // 4 · Axial max body diameter
   function calcBody() {
     var t = num("#bd-thick"), form = parseFloat($("#bd-tool").value);
-    if (t === null) { $("#bd-result").innerHTML = row("Enter a board thickness", "—"); return; }
+    if (t === null) { $("#bd-result").innerHTML = row(T("c4.enter"), "—"); return; }
     var max = form - 2 * t;
     var html = "";
-    html += row("Fixed form length", fmt(form, 2) + " mm");
-    html += row("Board thickness", fmt(t, 3) + " mm");
-    html += row("Maximum body diameter", fmt(max, 3) + " mm", max > 0 ? "ok" : "bad");
-    if (max <= 0) html += row("Warning", "Board too thick for this tooling — no body clearance", "bad");
+    html += row(T("c4.formLen"), fmt(form, 2) + " mm");
+    html += row(T("c4.thick"), fmt(t, 3) + " mm");
+    html += row(T("c4.maxBody"), fmt(max, 3) + " mm", max > 0 ? "ok" : "bad");
+    if (max <= 0) html += row(T("warn"), T("c4.tooThick"), "bad");
 
     var actual = num("#bd-actual");
     if (actual !== null && actual > 0) {
-      html += row("Your component body dia", fmt(actual, 3) + " mm");
+      html += row(T("c4.yourBody"), fmt(actual, 3) + " mm");
       html += actual <= max
-        ? row("Verdict", "Fits", "ok")
-        : row("Verdict", "Exceeds by " + fmt(actual - max, 3) + " mm — use larger form length tooling", "bad");
+        ? row(T("verdict"), T("c4.fits"), "ok")
+        : row(T("verdict"), T("c4.exceeds", { d: fmt(actual - max, 3) }), "bad");
     }
     $("#bd-result").innerHTML = html;
   }
@@ -205,51 +211,67 @@
      READINESS CHECKLIST
      ====================================================================== */
   var CHECKS = [
-    { g: "Board", t: "Board thickness is 0.8 – 2.36 mm", d: "Single Board Transfer handling narrows this to 1.52 – 2.36 mm." },
-    { g: "Board", t: "Warpage measured and within limit", d: "1.60 mm one axis for radial; 3.17 mm both axes for axial and DIP." },
-    { g: "Board", t: "Panel size inside the handling window", d: "100 × 80 mm minimum to 483 × 406 mm maximum with handling." },
-    { g: "Board", t: "Datum holes standardised at 3.96 mm, longest lateral span", d: "±0.05 mm position tolerance. 4.74 mm absolute maximum on Pass-Thru II." },
-    { g: "Board", t: "Insertion hole position tolerance held at ±0.07 mm", d: "Confirm with your fabricator — this is spent before the board reaches the line." },
-    { g: "Board", t: "Components placed at 0° or 90° only", d: "Other angles cannot be inserted. Single-axis for DIP and axial throughput." },
-    { g: "Component", t: "Hole diameter = lead dia + 0.48 mm ± 0.08 mm", d: "+0.58 mm for unguided leads such as SIP or the third leg of a triangular layout." },
-    { g: "Component", t: "Component packaging formats recorded for every THT part", d: "Tape, tube, tray, bulk or stick. Bulk and stick are usually the problem." },
-    { g: "Component", t: "Radial component pitch matches the panel layout", d: "2.5 / 5.0 / 7.5 / 10.0 mm. A 3.5 mm part on a 5.0 mm layout is a purchasing fix." },
-    { g: "Component", t: "Odd-form parts identified and counted", d: "Connectors, transformers, USB sockets, relays. Count them before ROI, not after ramp." },
-    { g: "Component", t: "DIP sockets specified with tapered bushing", d: "Non-tapered bushing directly reduces insertion reliability. Request at quotation." },
-    { g: "Process", t: "Clinch angle and length specified per component family", d: "Axial: 0°–45°, 1.28–1.80 mm. Outward clinch not recommended for DIP sockets." },
-    { g: "Process", t: "Bottom-side clinch anvil clearance verified in layout", d: "The most commonly overlooked clearance — clear from above, colliding from below." },
-    { g: "Process", t: "Capacity requirement stated in CPH or UPH", d: "Not pallets per hour. A 60-unit pallet at 40 pallets/h is 2,400 CPH, not 40." }
+    { g: "ck.board", t: "ck.1",  d: "ck.1d"  },
+    { g: "ck.board", t: "ck.2",  d: "ck.2d"  },
+    { g: "ck.board", t: "ck.3",  d: "ck.3d"  },
+    { g: "ck.board", t: "ck.4",  d: "ck.4d"  },
+    { g: "ck.board", t: "ck.5",  d: "ck.5d"  },
+    { g: "ck.board", t: "ck.6",  d: "ck.6d"  },
+    { g: "ck.component", t: "ck.7",  d: "ck.7d"  },
+    { g: "ck.component", t: "ck.8",  d: "ck.8d"  },
+    { g: "ck.component", t: "ck.9",  d: "ck.9d"  },
+    { g: "ck.component", t: "ck.10", d: "ck.10d" },
+    { g: "ck.component", t: "ck.11", d: "ck.11d" },
+    { g: "ck.process", t: "ck.12", d: "ck.12d" },
+    { g: "ck.process", t: "ck.13", d: "ck.13d" },
+    { g: "ck.process", t: "ck.14", d: "ck.14d" }
   ];
+
+  // Preserve tick state across a language switch.
+  function checkedState() {
+    var st = {};
+    $$("[data-check]").forEach(function (cb) { st[cb.dataset.check] = cb.checked; });
+    return st;
+  }
 
   function renderChecklist() {
     var host = $("#checklist");
     if (!host) return;
+    var prev = host.dataset.done ? checkedState() : {};
     var lastG = "", html = "";
     CHECKS.forEach(function (c, i) {
       if (c.g !== lastG) {
-        html += '<h3 class="mt2 mb1" style="font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--slate)">' + esc(c.g) + "</h3>";
+        html += '<h3 class="mt2 mb1" style="font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--slate)">' + esc(T(c.g)) + "</h3>";
         lastG = c.g;
       }
       html += '<label class="check-item" data-i="' + i + '">' +
-              '<input type="checkbox" data-check="' + i + '">' +
-              '<span class="ci-body"><span class="ci-title">' + esc(c.t) + "</span>" +
-              '<span class="ci-desc">' + esc(c.d) + "</span></span></label>";
+              '<input type="checkbox" data-check="' + i + '"' + (prev[i] ? " checked" : "") + ">" +
+              '<span class="ci-body"><span class="ci-title">' + esc(T(c.t)) + "</span>" +
+              '<span class="ci-desc">' + esc(T(c.d)) + "</span></span></label>";
     });
     host.innerHTML = html;
+    host.dataset.done = "1";
+    // re-apply the "checked" class after a rebuild
+    $$("[data-check]").forEach(function (cb) {
+      if (cb.checked) cb.closest(".check-item").classList.add("checked");
+    });
 
-    host.addEventListener("change", function (e) {
-      var cb = e.target;
-      if (!cb.dataset || cb.dataset.check === undefined) return;
-      cb.closest(".check-item").classList.toggle("checked", cb.checked);
-      updateScore();
-    });
-    $("#reset-check").addEventListener("click", function () {
-      $$('[data-check]').forEach(function (cb) {
-        cb.checked = false;
-        cb.closest(".check-item").classList.remove("checked");
+    if (!host.dataset.bound) {
+      host.dataset.bound = "1";
+      host.addEventListener("change", function (e) {
+        var cb = e.target;
+        if (!cb.dataset || cb.dataset.check === undefined) return;
+        cb.closest(".check-item").classList.toggle("checked", cb.checked);
+        updateScore();
       });
-      updateScore();
-    });
+      $("#reset-check").addEventListener("click", function () {
+        $$("[data-check]").forEach(function (cb) {
+          cb.checked = false;
+          cb.closest(".check-item").classList.remove("checked");
+        });
+        updateScore();
+      });
+    }
     updateScore();
   }
 
@@ -257,7 +279,7 @@
     var total = CHECKS.length;
     var done = $$("[data-check]").filter(function (c) { return c.checked; }).length;
     var pct = Math.round((done / total) * 100);
-    $("#score-label").textContent = done + " of " + total + " confirmed";
+    $("#score-label").textContent = T("ck.count", { n: done, t: total });
     $("#score-val").textContent = pct + "%";
     $("#score-meter").style.width = pct + "%";
   }
@@ -267,7 +289,7 @@
      ====================================================================== */
   function renderBlogIndex() {
     var host = $("#blog-grid");
-    if (!host || host.dataset.done) return;
+    if (!host) return;
     host.innerHTML = BLOGS.map(function (b) {
       return '<article class="blog-card" data-id="' + b.id + '">' +
         '<div class="bc-top"></div>' +
@@ -275,16 +297,19 @@
           '<div class="bc-topic">' + esc(b.topic) + "</div>" +
           "<h3>" + esc(b.title) + "</h3>" +
           '<p class="bc-excerpt">' + esc(b.excerpt) + "</p>" +
-          '<div class="bc-foot"><span>' + esc(b.read) + " read</span>" +
+          '<div class="bc-foot"><span>' + esc(T("blog.readTime", { n: b.read })) + "</span>" +
           '<span>' + esc(b.date) + "</span></div>" +
         "</div></article>";
     }).join("");
     host.dataset.done = "1";
 
-    host.addEventListener("click", function (e) {
-      var card = e.target.closest(".blog-card");
-      if (card) location.hash = "#/post/" + card.dataset.id;
-    });
+    if (!host.dataset.bound) {
+      host.dataset.bound = "1";
+      host.addEventListener("click", function (e) {
+        var card = e.target.closest(".blog-card");
+        if (card) location.hash = "#/post/" + card.dataset.id;
+      });
+    }
   }
 
   function blockHTML(b) {
@@ -315,28 +340,31 @@
     var b = BLOGS.filter(function (x) { return x.id === id; })[0];
     var host = $("#post-body");
     if (!b) {
-      host.innerHTML = '<p>Article not found. <a href="#/blog">Back to all insights &rarr;</a></p>';
+      host.innerHTML = "<p>" + esc(T("blog.notFound")) +
+        ' <a href="#/blog">' + esc(T("blog.backLink")) + "</a></p>";
       return;
     }
     var toc = b.body.filter(function (x) { return x.h; }).map(function (x) {
       return "<li>" + esc(x.h) + "</li>";
     }).join("");
 
+    var ctaBody = T("blog.ctaBody", { email: "__EMAIL__", form: "__FORM__" })
+      .replace("__EMAIL__", '<a href="mailto:info@smthelp.com">info@smthelp.com</a>')
+      .replace("__FORM__", '<a href="#/survey">' + esc(T("blog.ctaForm")) + "</a>");
+
     host.innerHTML =
-      '<a class="view-link" href="#/blog">&larr; All insights</a>' +
+      '<a class="view-link" href="#/blog">' + esc(T("blog.back")) + "</a>" +
       "<h1 style='margin-top:16px'>" + esc(b.title) + "</h1>" +
       '<div class="meta">' +
-        '<div class="byline"><span class="av">SM</span><span>Southern Machinery engineering</span></div>' +
-        "<span>" + esc(b.date) + "</span><span>" + esc(b.read) + " read</span>" +
-        (b.model ? "<span>Platform: " + esc(b.model) + "</span>" : "") +
+        '<div class="byline"><span class="av">SM</span><span>' + esc(T("blog.byline")) + "</span></div>" +
+        "<span>" + esc(b.date) + "</span><span>" + esc(T("blog.readTime", { n: b.read })) + "</span>" +
+        (b.model ? "<span>" + esc(T("blog.platform")) + " " + esc(b.model) + "</span>" : "") +
       "</div>" +
-      '<div class="toc"><div class="toc-t">In this article</div><ol>' + toc + "</ol></div>" +
+      '<div class="toc"><div class="toc-t">' + esc(T("blog.toc")) + "</div><ol>" + toc + "</ol></div>" +
       b.body.map(blockHTML).join("") +
-      '<div class="callout mt3"><p><strong>Need this run against your actual board?</strong> ' +
-      'Send a top-side PCB image, the component list with part numbers, and your capacity requirement to ' +
-      '<a href="mailto:info@smthelp.com">info@smthelp.com</a> — or use the ' +
-      '<a href="#/survey">requirement form</a>. You will get a component-by-component insertion verdict.</p></div>' +
-      '<p class="small mt2">Keywords: ' + b.keywords.map(function (k) {
+      '<div class="callout mt3"><p><strong>' + esc(T("blog.ctaTitle")) + "</strong> " +
+      ctaBody + "</p></div>" +
+      '<p class="small mt2">' + esc(T("blog.keywords")) + " " + b.keywords.map(function (k) {
         return '<span class="badge neutral">' + esc(k) + "</span>";
       }).join(" ") + "</p>";
   }
@@ -354,8 +382,9 @@
     var fhost = $("#video-filters");
     fhost.innerHTML = cats.map(function (c) {
       var n = c === "All" ? VIDEOS.length : VIDEOS.filter(function (v) { return v.cat === c; }).length;
+      var label = c === "All" ? T("media.all") : c;
       return '<button class="chip' + (c === vidFilter ? " active" : "") + '" data-cat="' + esc(c) + '">' +
-             esc(c) + '<span class="n">' + n + "</span></button>";
+             esc(label) + '<span class="n">' + n + "</span></button>";
     }).join("");
 
     if (!fhost.dataset.bound) {
@@ -401,8 +430,9 @@
     var fhost = $("#catalog-filters");
     fhost.innerHTML = cats.map(function (c) {
       var n = c === "All" ? CATALOG.length : CATALOG.filter(function (x) { return x.cat === c; }).length;
+      var label = c === "All" ? T("media.all") : c;
       return '<button class="chip' + (c === catFilter ? " active" : "") + '" data-ccat="' + esc(c) + '">' +
-             esc(c) + '<span class="n">' + n + "</span></button>";
+             esc(label) + '<span class="n">' + n + "</span></button>";
     }).join("");
 
     if (!fhost.dataset.bound) {
@@ -430,16 +460,17 @@
      ====================================================================== */
   function renderGallery(sel) {
     var host = $(sel);
-    if (!host || host.dataset.done) return;
+    if (!host) return;
     var items = [];
-    IMG.s3010a.forEach(function (u) { items.push([u, "S3010A radial insertion machine — Southern Machinery"]); });
-    IMG.s7900.forEach(function (u) { items.push([u, "S7900 odd-form insertion machine — Southern Machinery"]); });
-    IMG.s7020.forEach(function (u) { items.push([u, "S7020 odd-form inserter — Southern Machinery"]); });
-    IMG.feeders.forEach(function (u) { items.push([u, "Custom feeder tooling — designed and manufactured in-house"]); });
+    IMG.s3010a.forEach(function (u) { items.push([u, "gal.1"]); });
+    IMG.s7900.forEach(function (u) { items.push([u, "gal.2"]); });
+    IMG.s7020.forEach(function (u) { items.push([u, "gal.3"]); });
+    IMG.feeders.forEach(function (u) { items.push([u, "gal.4"]); });
 
     host.innerHTML = items.map(function (it) {
-      return '<figure><img src="' + it[0] + '" alt="' + esc(it[1]) + '" loading="lazy">' +
-             "<figcaption>" + esc(it[1]) + "</figcaption></figure>";
+      var cap = T(it[1]);
+      return '<figure><img src="' + it[0] + '" alt="' + esc(cap) + '" loading="lazy">' +
+             "<figcaption>" + esc(cap) + "</figcaption></figure>";
     }).join("");
     host.dataset.done = "1";
   }
@@ -447,6 +478,20 @@
   /* ======================================================================
      BOOT
      ====================================================================== */
+  // Rebuild everything app.js generated. Called on load and whenever the
+  // language changes, so JS-rendered content switches with the rest of the UI.
+  function rerenderAll() {
+    calcHole(); calcSpan(); calcRadial(); calcBody();
+    renderChecklist();
+    renderBlogIndex();
+    renderGallery("#gallery-radial");
+    renderGallery("#gallery-main");
+    renderVideos();
+    renderCatalog();
+    var h = location.hash || "";
+    if (h.indexOf("#/post/") === 0) renderPost(h.replace(/^#\/post\//, ""));
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     $("#navToggle").addEventListener("click", function () {
       $("#nav").classList.toggle("open");
@@ -460,5 +505,9 @@
 
     if (!location.hash) location.hash = "#/guide";
     route();
+
+    // ui.js registers its own sm:langchange listener first (it loads earlier),
+    // so the DOM is already translated by the time this runs.
+    document.addEventListener("sm:langchange", rerenderAll);
   });
 })();

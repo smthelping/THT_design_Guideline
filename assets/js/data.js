@@ -124,7 +124,7 @@ const BLOGS = [
   title: "Why Your PCB Layout Decides Whether Auto Insertion Ever Pays Off",
   excerpt: "Most THT automation projects fail on the drawing board, not on the shop floor. Here is what the machine actually needs from your layout — and the four numbers that decide it.",
   date: "2026-06-24",
-  read: "7 min",
+  read: 7,
   model: "S3010A",
   keywords: ["THT design guidelines", "PCB layout auto insertion", "through hole design rules"],
   body: [
@@ -175,7 +175,7 @@ const BLOGS = [
   title: "The 0.48 mm Rule That Quietly Sets Your Insertion Yield",
   excerpt: "Hole diameter looks like a trivial detail. It is the difference between a component that clinches tight and one that falls out on the conveyor. Here is the formula and where it breaks.",
   date: "2026-06-18",
-  read: "6 min",
+  read: 6,
   model: "S3010A",
   keywords: ["THT hole diameter formula", "PCB insertion hole size", "auto insertion design rules"],
   body: [
@@ -226,7 +226,7 @@ const BLOGS = [
   title: "3.5 mm to 5.0 mm: Fixing Capacitor Pitch Before You Buy a Machine",
   excerpt: "A real panel evaluation for a Brazilian power-supply builder. Ten components, three outcomes: runs as-is, needs a packaging change, or cannot be automated. Here is the full table.",
   date: "2026-06-11",
-  read: "8 min",
+  read: 8,
   model: "S3010A",
   keywords: ["capacitor pitch auto insertion", "THT DFM evaluation", "radial insertion pitch"],
   body: [
@@ -288,7 +288,7 @@ const BLOGS = [
   title: "Your Resistor Leads Are Too Short, And It Is Costing You the Line",
   excerpt: "Axial insertion fails for one reason more than any other: the hole span is smaller than the component body needs. The formula is simple and almost nobody applies it.",
   date: "2026-06-04",
-  read: "7 min",
+  read: 7,
   model: "S-4000 / S-4000H",
   keywords: ["axial insertion hole span", "resistor lead length", "axial auto insertion design"],
   body: [
@@ -348,7 +348,7 @@ const BLOGS = [
   title: "Clinch Angles Explained: Why 45° Is Not Automatically Better",
   excerpt: "Clinch angle and clinch length are set independently, and the wrong combination either blocks the hole or fails to hold the part. Here is how to specify both.",
   date: "2026-05-28",
-  read: "6 min",
+  read: 6,
   model: "S3010A / S7020T",
   keywords: ["clinch angle", "cut and clinch specification", "THT lead clinching"],
   body: [
@@ -399,7 +399,7 @@ const BLOGS = [
   title: "DIP Sockets That Refuse to Be Auto-Inserted, And the Three Fixes",
   excerpt: "DIP socket insertion fails on lead tip geometry, bushing taper and clinch direction — three things specified by the socket vendor, not by you. Here is what to demand.",
   date: "2026-05-21",
-  read: "7 min",
+  read: 7,
   model: "DIP Insertion",
   keywords: ["DIP socket auto insertion", "machined pin DIP", "DIP insertion hole diameter"],
   body: [
@@ -450,7 +450,7 @@ const BLOGS = [
   title: "The Hidden Cost of a Warped Panel",
   excerpt: "Warpage, panelisation and process edge width are decided at fabrication and rarely reviewed. They are also the most common cause of transfer errors on inline THT lines.",
   date: "2026-05-14",
-  read: "6 min",
+  read: 6,
   model: "BHS / SBT",
   keywords: ["PCB warpage auto insertion", "panelisation THT", "board handling design"],
   body: [
@@ -504,7 +504,7 @@ const BLOGS = [
   title: "Datum Holes: The 3.96 mm Detail That Saves Minutes Every Changeover",
   excerpt: "Datum holes are the reference the whole insertion process is measured from. Standardise them and changeover collapses. Skip it and every new product pays the setup cost again.",
   date: "2026-05-07",
-  read: "6 min",
+  read: 6,
   model: "Workboard Holders",
   keywords: ["datum holes PCB", "workboard holder design", "THT changeover time"],
   body: [
@@ -556,7 +556,7 @@ const BLOGS = [
   title: "Five Signs Your Odd-Form Components Cannot Be Automated Yet",
   excerpt: "Odd-form insertion is where THT automation projects stall. These five conditions decide it — and three of them are fixable without touching the component.",
   date: "2026-04-29",
-  read: "8 min",
+  read: 8,
   model: "S7900 / S7020T",
   keywords: ["odd form insertion", "odd form feeder", "connector auto insertion"],
   body: [
@@ -610,7 +610,7 @@ const BLOGS = [
   title: "From 940 UPH to a Lights-Out THT Line: A Charger Design Audit",
   excerpt: "Two charger panels, 5.4 million units a year, 1210 UPH combined. A full design audit showing exactly where automation ends and manual work begins.",
   date: "2026-04-22",
-  read: "9 min",
+  read: 9,
   model: "S3010A / S7020T / S7900",
   keywords: ["THT line design audit", "charger PCB assembly", "auto insertion ROI"],
   body: [
