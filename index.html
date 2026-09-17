@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THT Design Guide — Auto Insertion PCB Design Rules | Southern Machinery</title>
+<meta name="description" content="Through-hole auto insertion design guidelines: hole diameter, hole span, datum holes, clinch specifications, warpage limits and DFM checkers for radial, axial and DIP component insertion. By Southern Machinery (SMThelp).">
+<meta name="keywords" content="THT design guidelines, through hole design rules, auto insertion PCB design, radial insertion, axial insertion, DIP insertion, DFM, odd form insertion, Southern Machinery, SMThelp">
+<meta name="author" content="Southern Machinery Sales And Service Co Limited">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://file.autoinsertion.com/public/THT-Design-Guide/index.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="THT Design Guide — Auto Insertion PCB Design Rules">
+<meta property="og:description" content="Every dimension that decides whether your through-hole board can be auto-inserted: hole diameter, hole span, datum holes, clinch, warpage. Plus live DFM calculators.">
+<meta property="og:image" content="https://ph.smthelp.com/images/2024/06/26/Southern-Machinery-logo-300x83.png">
+<meta property="og:site_name" content="Southern Machinery">
+
+<link rel="icon" href="https://ph.smthelp.com/images/2024/06/26/Southern-Machinery-logo-300x83.png">
+<link rel="preconnect" href="https://ph.smthelp.com">
+<link rel="preconnect" href="https://i.ytimg.com">
+<link rel="stylesheet" href="assets/css/style.css">
+
+<!-- Structured data for answer engines -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "THT Design Guide — Auto Insertion PCB Design Rules",
+  "description": "Through-hole auto insertion design guidelines covering hole diameter, hole span, datum holes, clinch specifications and warpage limits for radial, axial and DIP insertion.",
+  "author": { "@type": "Organization", "name": "Southern Machinery Sales And Service Co Limited" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Southern Machinery",
+    "logo": { "@type": "ImageObject", "url": "https://ph.smthelp.com/images/2024/06/26/Southern-Machinery-logo-300x83.png" }
+  },
+  "about": ["Through Hole Technology", "PCB Design for Manufacturing", "Automatic Component Insertion"],
+  "dateModified": "2026-09-17"
+}
+</script>
+</head>
+<body>
+
+<!-- ================= TOP BAR ================= -->
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href="#/" aria-label="Southern Machinery — Smart EMS factory partner">
+      <img src="https://ph.smthelp.com/images/2024/06/26/Southern-Machinery-logo-300x83.png"
+           alt="Southern Machinery logo — SMT THT machine design and manufacturing">
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="nav" id="nav">
+      <a href="#/guide" data-nav="guide">Design Guide</a>
+      <a href="#/dfm" data-nav="dfm">DFM Check</a>
+      <a href="#/case" data-nav="case">Case Data</a>
+      <a href="#/survey" data-nav="survey">Requirement Form</a>
+      <a href="#/blog" data-nav="blog">Insights</a>
+      <a href="#/media" data-nav="media">Videos &amp; Catalog</a>
+      <a href="#/tools" data-nav="tools">ROI Tools</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">Through Hole Technology · Design Guidelines</span>
+      <h1>
+        Design the board right, and the machine runs at rated speed.
+        <span class="cn">自动插件 PCB 设计指引 — 让插件机跑出额定产能</span>
+      </h1>
+      <p class="lead">
+        Every through-hole automation project is decided on the drawing board. Hole diameter, hole span,
+        datum holes, clinch geometry, warpage — get these right and a 12,000 CPH inserter delivers 12,000 CPH.
+        Get them wrong and the shortfall never appears in any report.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#/dfm">Run the DFM checker &rarr;</a>
+        <a class="btn btn-ghost" href="#/guide">Read the guidelines</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="num">0.48 mm</div><div class="lbl">Lead-to-hole clearance</div></div>
+        <div class="stat"><div class="num">±0.05 mm</div><div class="lbl">Datum hole tolerance</div></div>
+        <div class="stat"><div class="num">50+ machines</div><div class="lbl">Shipped overseas since 2009</div></div>
+      </div>
+    </div>
+    <div class="hero-img">
+      <img src="https://ph.smthelp.com/images/2025/12/06/S3010-Radial-Insertion-Machine.md.png"
+           alt="S3010A radial auto insertion machine with ten feeder positions — Southern Machinery">
+    </div>
+  </div>
+</section>
+
+<main id="app">
+
+<!-- ==================================================================
+     ROUTE · GUIDE
+     ================================================================== -->
+<div class="route" id="route-guide">
+
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">01 · Foundation</span>
+        <h2>Why layout, not equipment, decides the outcome</h2>
+        <p>
+          Automatic insertion is a tolerance-stacking problem. Five independent error sources must sum to less
+          than the clearance available. If any one of them consumes more than its share, no machine accuracy
+          can recover the result.
+        </p>
+      </div>
+
+      <div class="grid g3">
+        <div class="card">
+          <div class="kicker">Error source 1–2</div>
+          <h3>Machine and holder</h3>
+          <p>Machine positioning repeatability plus workboard holder accuracy. The holder is a design consequence —
+          standardise datum holes and the holder becomes a family asset rather than a per-product tool.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">Error source 3–4</div>
+          <h3>Board pattern and leads</h3>
+          <p>Where the holes actually are versus where the CAD file says, plus component lead straightness and tip
+          configuration. Fabrication tolerance is spent before the board reaches the line.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">Error source 5</div>
+          <h3>Hole diameter and position</h3>
+          <p>Insertion holes hold ±0.07 mm position tolerance; datum holes hold ±0.05 mm. Both are tighter than most
+          designers assume.</p>
+        </div>
+      </div>
+
+      <div class="callout mt2">
+        <p><strong>Three inputs set the economics of THT assembly:</strong> the circuit boards, the equipment, and the
+        components to be inserted. Standardising all three reduces process variability, which raises insertion
+        reliability and lowers production cost. The boards are the only one you fully control at the design stage —
+        which is why the design guideline conversation has to happen before the purchase order.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- BOARD CONSIDERATIONS ---------------- -->
+  <section class="section soft">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">02 · Board Considerations</span>
+        <h2>Size, shape, panelisation, thickness, warpage</h2>
+        <p>These five are decided at fabrication and are rarely reviewed afterwards. They determine whether the board
+        can be handled at all, before any component question is asked.</p>
+      </div>
+
+      <div class="table-wrap mb2">
+        <table>
+          <thead>
+            <tr><th>Parameter</th><th class="num">Specification</th><th>Applies to</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Insertable area, no board handling</td><td class="num">457.2 × 457.2 mm (18" × 18")</td><td>Single head — radial, DIP, axial</td></tr>
+            <tr><td>Insertable area, no board handling</td><td class="num">457.2 × 457.2 mm, less corners</td><td>Dual head — axial</td></tr>
+            <tr><td>Minimum board with handling</td><td class="num">100 × 80 mm (4.0" × 3.1")</td><td>Single and dual head</td></tr>
+            <tr><td>Maximum board, single head</td><td class="num">483 × 406 mm (19.0" × 16.0")</td><td>With board handling</td></tr>
+            <tr><td>Maximum board, dual head</td><td class="num">457 × 330 mm (18.0" × 13.0")</td><td>With board handling</td></tr>
+            <tr><td>Board thickness</td><td class="num">0.8 – 2.36 mm (0.032" – 0.093")</td><td>Radial, axial, DIP insertion</td></tr>
+            <tr><td>Board thickness — BHS handling</td><td class="num">0.8 – 2.36 mm</td><td>Board Handling System</td></tr>
+            <tr><td>Board thickness — SBT handling</td><td class="num">1.52 – 2.36 mm (0.060" – 0.093")</td><td>Single Board Transfer</td></tr>
+            <tr><td>Maximum warpage, one axis</td><td class="num">1.60 mm (0.063")</td><td>Radial insertion</td></tr>
+            <tr><td>Maximum warpage, both axes</td><td class="num">3.17 mm (0.125")</td><td>Axial and DIP insertion</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid g3">
+        <div class="card">
+          <h3>Shape</h3>
+          <p>Standalone machines place boards on a dedicated workboard holder, so rectangular or square shape is not
+          critical. Machines with automatic board handling need symmetry, controlled warpage and no cutouts in the
+          clamp zone. The preferred configuration uses breakaway inserts to yield a symmetrical panel with a
+          consistent process edge.</p>
+        </div>
+        <div class="card">
+          <h3>Panelisation</h3>
+          <p>Positioning small boards into multiple breakaway arrays raises throughput by amortising handling overhead
+          across more units per transfer. Standardising panel size across a product family removes changeover time,
+          because the same holder and handling setup apply to every board in the family.</p>
+        </div>
+        <div class="card accent">
+          <h3>Warpage</h3>
+          <p>Warpage causes transfer errors and degrades insertion performance. Note the asymmetry: radial insertion
+          allows only 1.60 mm on one axis, while axial and DIP allow 3.17 mm on both. A board that passes axial may
+          still fail radial.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sec-head">
+        <span class="tag">02.1 · Location References</span>
+        <h2>Datum holes and axis objectives</h2>
+        <p>Datum holes are the locating references every other hole is drilled relative to, and the features the
+        workboard holder clamps on. Standardising them is the single cheapest changeover reduction available.</p>
+      </div>
+
+      <div class="grid g2">
+        <div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Feature</th><th class="num">Min</th><th class="num">Recommended</th><th class="num">Max</th></tr></thead>
+              <tbody>
+                <tr><td>Primary datum hole D1</td><td class="num">3.17 mm</td><td class="num"><strong>3.96 mm</strong></td><td class="num">6.35 mm</td></tr>
+                <tr><td>Secondary datum hole D2</td><td class="num">3.17 mm</td><td class="num">—</td><td class="num">6.35 mm</td></tr>
+                <tr><td>Pass-Thru II handling</td><td class="num">—</td><td class="num">—</td><td class="num"><strong>4.74 mm</strong></td></tr>
+                <tr><td>Insertion hole position tol.</td><td class="num" colspan="3">±0.07 mm (0.003")</td></tr>
+                <tr><td>Datum hole position tol.</td><td class="num" colspan="3">±0.05 mm (0.002")</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <div class="card ok mb1">
+            <h3>Four rules</h3>
+            <ol style="margin:0;padding-left:20px;color:var(--slate);font-size:14.5px">
+              <li>Position datum holes with the <strong>longest lateral span</strong> between them — angular error scales with span.</li>
+              <li>Standardise datum diameter and spacing across the <strong>product family</strong>. This is the changeover lever, and it is free.</li>
+              <li>On Pass-Thru II board handling, the locating hole maximum is <strong>4.74 mm</strong>. A 6.35 mm datum hole is valid standalone and out of spec here.</li>
+              <li>Hold datum position tolerance at <strong>±0.05 mm</strong>. Insertion holes get ±0.07 mm; datums are tighter because everything references them.</li>
+            </ol>
+          </div>
+          <div class="card warn">
+            <h3>Axis objectives</h3>
+            <p>Insertion is possible at <strong>0° and 90° only</strong>. On DIP and axial inserters, components should be
+            inserted in one axis only for maximum throughput. Radial machines insert at 0° or 90° without affecting
+            throughput. Two-axis insertion is acceptable and efficient; other angles are not possible.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- WORKBOARD HOLDERS ---------------- -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">03 · Workboard Holders</span>
+        <h2>The interface between your datum design and the machine</h2>
+        <p>A holder that does not locate the board accurately and repeatably will reduce insertion performance
+        regardless of machine capability. Choose by lot size and changeover frequency.</p>
+      </div>
+      <div class="grid g3">
+        <div class="card">
+          <div class="kicker">Large lots · medium-to-high changeover</div>
+          <h3>Custom holder</h3>
+          <p>Designed for specific board sizes, giving the highest positional accuracy. Multiple boards can share one
+          custom holder if sizes and locating holes are standardised — which is exactly why datum standardisation pays.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">Prototype · contract manufacturing</div>
+          <h3>Adjustable holder</h3>
+          <p>Accommodates multiple board sizes with low-to-medium changeover. The usual choice for high-mix
+          environments. Note that an adjustable holder cannot compensate for datum holes that move between products —
+          it only accommodates boards that are individually correct.</p>
+        </div>
+        <div class="card">
+          <div class="kicker">High volume · low-to-medium changeover</div>
+          <h3>Automatic handling</h3>
+          <p><strong>BHS</strong> (Board Handling System) supports left-to-right or right-to-left transfer on single or dual
+          head machines. <strong>SBT</strong> (Single Board Transfer) suits same-side in/out layouts on single head machines
+          but narrows the thickness range to 1.52–2.36 mm.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- AXIAL ---------------- -->
+  <section class="section soft">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">04 · Axial Lead Component Insertion</span>
+        <h2>Hole span is the formula almost nobody applies</h2>
+        <p>Axial insertion damages component bodies for one dominant reason: the hole span is smaller than the body
+        requires. The driver tips close on the body because there is nowhere for it to go.</p>
+      </div>
+
+      <div class="grid g2 mb2">
+        <div>
+          <h3 class="mt0">Minimum insertion hole span</h3>
+          <p class="small">Hole span is the distance between hole centres. Design the span <em>greater</em> than the
+          calculated minimum, never equal to it — body lengths vary between production lots without a part-number change.</p>
+          <div class="formula">
+<span class="cm">// Metric formulas</span>
+Standard tooling    <span class="hl">Min span = [(Body length × 1.112) + 2.36 mm] − Lead dia</span>
+Large lead tooling  <span class="hl">Min span = [(Body length × 1.085) + 4.11 mm] − Lead dia</span>
+5 mm tooling        <span class="hl">Min span = [(Body length × 1.109) + 1.40 mm] − Lead dia</span>
+5.5 mm tooling      <span class="hl">Min span = [(Body length × 1.067) + 2.30 mm] − Lead dia</span>
+
+<span class="cm">// Non-symmetrical components: subtract a further 0.41 mm (0.016")</span>
+<span class="cm">// from the maximum body length before applying the formula.</span>
+          </div>
+        </div>
+        <div>
+          <h3 class="mt0">Maximum component body diameter</h3>
+          <p class="small">In axial insertion the overall form length is fixed, so board thickness and body diameter
+          compete for the same space.</p>
+          <div class="formula">
+<span class="hl">Max body dia = Fixed form length − (2 × board thickness)</span>
+
+Standard / high density / large lead tooling   form length 10.69 mm (0.420")
+5 mm / 5.5 mm tooling                          form length 11.68 mm (0.460")
+
+<span class="cm">// Example: 1.57 mm board, standard tooling</span>
+Max body dia = 10.69 − (2 × 1.57) = <span class="hl">7.55 mm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g3 mb2">
+        <div class="card warn">
+          <h3>The 5 mm trap</h3>
+          <p>At a 5 mm insertion span, maximum component body diameter collapses to <strong>2.29 mm</strong> and maximum
+          lead diameter to <strong>0.61 mm</strong>. This is a genuinely tight window and the origin of most
+          "the machine cannot handle our parts" complaints.</p>
+        </div>
+        <div class="card warn">
+          <h3>Span stability limits</h3>
+          <p>On the 6295, 6292 and 6287 series, insertion span across five consecutive insertions should not vary by
+          more than <strong>10 mm</strong>. On the 6241, the limit is <strong>5 mm</strong> across two consecutive
+          insertions. Boards mixing a 7.5 mm resistor and a 22 mm wire link in adjacent positions can trip this.</p>
+        </div>
+        <div class="card">
+          <h3>Lead hole diameter</h3>
+          <p>Hole diameter = lead diameter + <strong>0.48 mm ± 0.08 mm</strong>. Too small degrades insertion
+          reliability; too large leaves loose components in the board and an unreliable clinch.</p>
+        </div>
+      </div>
+
+      <h3>Clinch lengths and angles</h3>
+      <div class="grid g2">
+        <div class="card">
+          <p><strong>Clinch angle</strong> is adjustable across 0° to 45°.<br>
+          <strong>Clinch lead length</strong> is adjustable from 1.28 mm (0.050") to 1.80 mm (0.071"), measured from
+          the centre of the insertion hole to the end of the lead.</p>
+          <p class="small mt1">Both are tooling parameters — changing either requires a tooling change, not a software
+          setting. The achieved angle may vary depending on lead hardness and hole diameter, so the specified figure
+          is a target, not a guarantee.</p>
+        </div>
+        <div class="card">
+          <h3>Topside clearances</h3>
+          <p>Outside formers guide the leads to the point of insertion, so clearance around each hole must allow the
+          tooling to function:</p>
+          <ul style="margin:8px 0 0;padding-left:20px;color:var(--slate);font-size:14.5px">
+            <li><strong>C = 0.25 mm</strong> (0.010") — recommended for all tooling styles</li>
+            <li><strong>D = 0.76 mm</strong> (0.030") — recommended for all tooling styles</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="mt2">Input taping classes — maximum insertion hole centre distance</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Input class</th><th class="num">Distance between tapes</th><th class="num">Max body length</th><th class="num">Max hole centre distance</th></tr></thead>
+          <tbody>
+            <tr><td>AAA (sequencer output)</td><td class="num">26 mm (1.024")</td><td class="num">7.6 mm</td><td class="num">12.7 mm (0.500")</td></tr>
+            <tr><td>AA</td><td class="num">45.5 mm (1.792")</td><td class="num">12.7 mm</td><td class="num">16.5 mm (0.650")</td></tr>
+            <tr><td>A</td><td class="num">50.2 mm (1.980")</td><td class="num">15.7 mm</td><td class="num">21.6 mm (0.850")</td></tr>
+            <tr><td>Standard output</td><td class="num">43.7 mm (1.72")</td><td class="num">15.7 mm</td><td class="num">22.35 mm (0.88")</td></tr>
+            <tr><td>B</td><td class="num">52.3 mm (2.06")</td><td class="num">19.1 mm</td><td class="num">30.99 mm (1.22")</td></tr>
+            <tr><td>C</td><td class="num">60.5 mm (2.38")</td><td class="num">25.4 mm</td><td class="num">32.26 mm (1.27")</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small mt1">It is acceptable to use up to two sizes larger (wider) input class than recommended. For
+      stand-alone sequencers, standard output is the standard class; other classes are available on request.</p>
+    </div>
+  </section>
+
+  <!-- ---------------- RADIAL ---------------- -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">05 · Radial Component Insertion</span>
+        <h2>Pitch is the constraint, and it is set by purchasing</h2>
+        <p>Radial insertion covers the largest share of through-hole components on consumer, lighting and power
+        boards. The design rules are simple; the failures come from component supply drifting away from the layout.</p>
+      </div>
+
+      <h3>Recommended lead hole span by component pitch</h3>
+      <div class="table-wrap mb2">
+        <table>
+          <thead><tr><th>Component pitch</th><th class="num">Recommended lead hole span</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td><strong>2.5 mm</strong> components</td><td class="num">2.54 mm (0.100")</td><td>Fixed span for lead diameters up to 0.86 mm</td></tr>
+            <tr><td><strong>5.0 mm</strong> components</td><td class="num">Lead diameter + 4.5 mm (0.177")</td><td>0.36 mm lead &rarr; 4.85 mm span</td></tr>
+            <tr><td><strong>7.5 mm</strong> components</td><td class="num">Lead diameter + 7.04 mm (0.277")</td><td>0.36 mm lead &rarr; 7.39 mm span</td></tr>
+            <tr><td><strong>10.0 mm</strong> components</td><td class="num">Lead diameter + 9.58 mm (0.377")</td><td>0.36 mm lead &rarr; 9.93 mm span</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid g3 mb2">
+        <div class="card">
+          <h3>Lead hole diameter</h3>
+          <p>Hole diameter = <strong>maximum lead diameter + 0.48 mm ± 0.08 mm</strong>.</p>
+          <p class="small mt1"><strong>Unguided leads</strong> — the third leg of a triangular layout, in-line SIP and
+          potentiometer leads — need a larger clearance because nothing holds them on centre:
+          <strong>lead diameter + 0.58 mm ± 0.08 mm</strong>.</p>
+        </div>
+        <div class="card">
+          <h3>Component weight limit</h3>
+          <p>The Radial 8 inserts components weighing up to <strong>5 grams</strong>. Mass and centre of gravity both
+          matter: a short 5 g component with its centre of gravity 20.32 mm (0.80") above the feed hole may run, while
+          a tall 5 g component with a higher centre of gravity may not.</p>
+        </div>
+        <div class="card">
+          <h3>Reel and tape limits</h3>
+          <p>Maximum reel weight <strong>1.8 kg (4 lbs)</strong> — beyond that, consult the factory.</p>
+          <p class="small mt1">Taped components must unwind from reel and cassette, or unfold from ammo-pack, with a
+          force not exceeding <strong>5 Newtons (17.6 oz)</strong>.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>Note on lead hole spans.</strong> These dimensions apply only to holes for leads captured by the
+        insertion tooling — the jaw clamps secure the component leads against the fixed surfaces of the jaw guide.
+        All remaining holes should be drilled according to the component manufacturer's specified spacing requirements.</p>
+      </div>
+
+      <div class="gallery mt3" id="gallery-radial"></div>
+    </div>
+  </section>
+
+  <!-- ---------------- DIP ---------------- -->
+  <section class="section soft">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">06 · Dual In-Line Package Insertion</span>
+        <h2>The diagonal is the diameter that matters</h2>
+        <p>DIP hole sizing has its own formula because a rectangular lead's effective diameter is its diagonal, not
+        its width. Calculating from the width alone is the classic DIP hole sizing error.</p>
+      </div>
+
+      <div class="grid g2 mb2">
+        <div>
+          <div class="formula">
+<span class="cm">// Minimum hole diameter for reliable DIP insertion</span>
+<span class="hl">Min hole dia = Max lead dia + Hole location tolerance + 0.25 mm (0.010")</span>
+
+<span class="cm">// Max lead diameter is the lead cross-section diagonal</span>
+<span class="hl">C = √(A² + B²)</span>       A and B = lead cross-section dimensions
+
+<span class="cm">// Example: 0.64 mm × 0.38 mm rectangular lead</span>
+C = √(0.64² + 0.38²) = <span class="hl">0.74 mm</span>
+<span class="cm">// Not 0.64 mm — the width alone understates the requirement</span>
+          </div>
+          <div class="card">
+            <h3>Lead tip configuration</h3>
+            <ul style="margin:0;padding-left:20px;color:var(--slate);font-size:14.5px">
+              <li><strong>Tapered lead tip — preferred.</strong> Self-centres against the hole.</li>
+              <li><strong>Squared lead tip — acceptable.</strong> Positional tolerance has to absorb the full misalignment.</li>
+              <li>Tip radius: 0.36 mm (0.015") maximum</li>
+              <li>Lead dimensions: 1.78 mm max / 0.76 mm min (long axis); 1.17 mm max / 0.38 mm min (short axis)</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <h3 class="mt0">Clinch lengths and angles</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Parameter</th><th class="num">DIP module</th><th class="num">DIP socket</th></tr></thead>
+              <tbody>
+                <tr><td>Inward clinch angle</td><td class="num">20° +8°</td><td class="num">0° +10° / −0°</td></tr>
+                <tr><td>Outward clinch</td><td class="num">Available</td><td class="num"><span class="badge bad">Not recommended</span></td></tr>
+                <tr><td>Minimum dimension A / B</td><td class="num">1.02 mm (0.040")</td><td class="num">1.02 mm (0.040")</td></tr>
+                <tr><td>Clinch length tolerance</td><td class="num">0.64 ± 0.13 mm</td><td class="num">0.64 ± 0.13 mm</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warn mt1">
+            <p><strong>Outward clinching is explicitly not recommended for DIP socket module insertion.</strong>
+            Tooling change is required to change lead clinch angle or length. Angle may vary depending on lead
+            hardness and hole diameter.</p>
+          </div>
+          <div class="card accent mt1">
+            <h3>Machined pin DIP sockets</h3>
+            <p>A <strong>tapered bushing is recommended for auto insertion</strong>. A non-tapered bushing contributes
+            directly to reduced insertion reliability — the lead catches on the aperture edge and the head mis-seats.
+            This is a purchasing decision, not a process one: request the tapered variant at quotation.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-head">
+        <span class="tag">06.1 · Mixed Technology</span>
+        <h2>DIP tooling clearances against adjacent SMT</h2>
+        <p>On mixed-technology boards, the insertion and clinch tooling must clear SMT components on both sides.
+        Three clearances need checking: DIP tooling to SMT on the topside, socket tooling to SMT on the topside, and
+        clinch tooling to SMT on the bottomside. The bottomside clinch anvil is the most commonly overlooked — the
+        board looks clear from above and the anvil collides with a neighbouring joint from below.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- LINE CONFIGURATION ---------------- -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">07 · Line Configuration</span>
+        <h2>From design rules to station planning</h2>
+        <p>A real board never maps to a single machine. The design guideline output is a station plan — and an honest
+        count of the operations that stay manual.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="s-num">1</div>
+          <div class="s-body">
+            <h3>Radial platform — taped, standard pitch</h3>
+            <p>The majority of component count and the source of the throughput figure. A 2.5 / 5.0 / 7.5 / 10.0 mm
+            tooling envelope covers every pitch on a mixed board family without a tooling changeover — which is what
+            makes a shared family viable on one setup.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="s-num">2</div>
+          <div class="s-body">
+            <h3>Odd-form platform — connectors, transformers, terminals</h3>
+            <p>Gripper tooling with tray, bowl and tube feeding. Lower cycle rate, higher component variety. Reel-fed
+            terminals belong here too, where clinch geometry determines the mechanical joint quality rather than
+            just retention.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="s-num">3</div>
+          <div class="s-body">
+            <h3>Manual station — defined, not residual</h3>
+            <p>Components with no handling surface or no taped supply stay manual. The point of the evaluation is to
+            name them and count them, so headcount planning is based on a number rather than an assumption.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="s-num">4</div>
+          <div class="s-body">
+            <h3>Board handling and inline transfer</h3>
+            <p>BHS for left-to-right or right-to-left transfer on single or dual head machines; SBT for same-side
+            in/out layouts. Check thickness against the handling choice — SBT narrows the range to 1.52–2.36 mm.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g3 mt2">
+        <div class="card ok">
+          <h3>Service commitment</h3>
+          <p>7×24 worldwide support · Free installation and training · 1 day lead time on spare parts ·
+          1 month customised solution turnaround.</p>
+        </div>
+        <div class="card">
+          <h3>Feeders, designed and manufactured in-house</h3>
+          <p>Tape, tray, tube, bowl, belt and label feeders — plus custom THT feeders built around your specific
+          component. We design and manufacture the feeder, nozzle and gripper tooling rather than reselling it.</p>
+        </div>
+        <div class="card">
+          <h3>Compatibility</h3>
+          <p>Nozzles and feeders are supplied for Panasonic, Yamaha, Fuji, JUKI, Samsung, Hitachi, ASM, Siemens,
+          Sanyo, Mirae, Casio, Assembleon, Sony and Hanwha platforms. A factory already running another brand is
+          the most natural starting point.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag" style="color:#fbbf24">Source &amp; Scope</span>
+        <h2 style="color:#fff">Where these numbers come from</h2>
+      </div>
+      <p style="color:#9fb3cc;max-width:80ch">
+        The dimensional specifications, formulas and clearance values on this page are compiled from
+        <strong style="color:#fff">Universal Instruments GS-354-01 Through Hole Design Guidelines</strong> (Insertion Machine
+        Division), combined with Southern Machinery field evaluation data from customer panels. Universal GS-354-01 is a
+        third-party engineering reference and remains the property of its author; the specification values reproduced here are
+        functional engineering parameters. Southern Machinery product references describe our own equipment and are based on
+        our own published specifications.
+      </p>
+      <p style="color:#9fb3cc;max-width:80ch;margin-bottom:0">
+        All specifications are subject to periodic review and may change without notice. For a board-specific evaluation,
+        send a top-side PCB image, the component list with part numbers, and your capacity requirement — see the
+        requirement form.
+      </p>
+    </div>
+  </section>
+
+</div><!-- /route-guide -->
+
+
+<!-- ==================================================================
+     ROUTE · DFM CHECKER
+     ================================================================== -->
+<div class="route" id="route-dfm">
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">DFM Checker</span>
+        <h2>Run your board against the design rules</h2>
+        <p>Three calculators and a pre-project gate. Everything runs in your browser — no data leaves this page.</p>
+      </div>
+
+      <div class="grid g2 mb3">
+        <!-- Calculator 1 -->
+        <div class="calc">
+          <h3 class="mt0">1 · Hole diameter</h3>
+          <p class="small mb1">Lead diameter plus 0.48 mm ± 0.08 mm. Use the <em>maximum</em> lead diameter, not nominal.</p>
+          <div class="field">
+            <label>Maximum lead diameter (mm) <span class="hint">e.g. 0.6</span></label>
+            <input type="number" id="hd-lead" value="0.6" step="0.01" min="0.1" max="3">
+          </div>
+          <div class="field">
+            <label>Lead type</label>
+            <select id="hd-type">
+              <option value="guided">Guided — captured by insertion tooling (+0.48 mm)</option>
+              <option value="unguided">Unguided — SIP, potentiometer, third leg (+0.58 mm)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Actual drilled diameter (mm) <span class="hint">optional — to compare</span></label>
+            <input type="number" id="hd-actual" placeholder="e.g. 1.6" step="0.01" min="0">
+          </div>
+          <div class="result" id="hd-result"></div>
+        </div>
+
+        <!-- Calculator 2 -->
+        <div class="calc">
+          <h3 class="mt0">2 · Axial minimum hole span</h3>
+          <p class="small mb1">Design the span <em>greater</em> than the minimum. Body lengths vary between lots.</p>
+          <div class="field">
+            <label>Component body length (mm) <span class="hint">use maximum, e.g. 10.0</span></label>
+            <input type="number" id="as-len" value="10" step="0.1" min="1">
+          </div>
+          <div class="field">
+            <label>Lead diameter (mm)</label>
+            <input type="number" id="as-lead" value="0.6" step="0.01" min="0.1">
+          </div>
+          <div class="field">
+            <label>Tooling style</label>
+            <select id="as-tool">
+              <option value="std">Standard tooling (×1.112 + 2.36)</option>
+              <option value="large">Large lead tooling (×1.085 + 4.11)</option>
+              <option value="5">5 mm tooling (×1.109 + 1.40)</option>
+              <option value="5.5">5.5 mm tooling (×1.067 + 2.30)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Body symmetry</label>
+            <select id="as-sym">
+              <option value="sym">Symmetrical</option>
+              <option value="nonsym">Non-symmetrical (−0.41 mm body length)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Your actual hole span (mm) <span class="hint">optional</span></label>
+            <input type="number" id="as-actual" placeholder="e.g. 12.5" step="0.1" min="0">
+          </div>
+          <div class="result" id="as-result"></div>
+        </div>
+
+        <!-- Calculator 3 -->
+        <div class="calc">
+          <h3 class="mt0">3 · Radial lead hole span</h3>
+          <p class="small mb1">Recommended hole span for the component pitch you are actually buying.</p>
+          <div class="field">
+            <label>Component pitch</label>
+            <select id="rs-pitch">
+              <option value="2.5">2.5 mm</option>
+              <option value="5.0" selected>5.0 mm</option>
+              <option value="7.5">7.5 mm</option>
+              <option value="10.0">10.0 mm</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Lead diameter (mm)</label>
+            <input type="number" id="rs-lead" value="0.6" step="0.01" min="0.1">
+          </div>
+          <div class="field">
+            <label>Your PCB hole span (mm) <span class="hint">optional — the pitch currently drilled</span></label>
+            <input type="number" id="rs-actual" placeholder="e.g. 3.5" step="0.1" min="0">
+          </div>
+          <div class="result" id="rs-result"></div>
+        </div>
+
+        <!-- Calculator 4 -->
+        <div class="calc">
+          <h3 class="mt0">4 · Axial maximum body diameter</h3>
+          <p class="small mb1">Board thickness and body diameter compete for the same fixed form length.</p>
+          <div class="field">
+            <label>Board thickness (mm)</label>
+            <input type="number" id="bd-thick" value="1.57" step="0.01" min="0.4">
+          </div>
+          <div class="field">
+            <label>Tooling style</label>
+            <select id="bd-tool">
+              <option value="10.69">Standard / high density / large lead (10.69 mm)</option>
+              <option value="11.68">5 mm / 5.5 mm tooling (11.68 mm)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Your component body diameter (mm) <span class="hint">optional</span></label>
+            <input type="number" id="bd-actual" placeholder="e.g. 6.3" step="0.1" min="0">
+          </div>
+          <div class="result" id="bd-result"></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sec-head">
+        <span class="tag">Pre-project gate</span>
+        <h2>Auto insertion readiness checklist</h2>
+        <p>Fourteen checks across board, component and process. Tick what you can confirm today. Anything unticked is
+        an open item — not necessarily a blocker, but something to resolve before equipment selection.</p>
+      </div>
+
+      <div class="check-list" id="checklist"></div>
+      <div class="score-bar">
+        <span class="small" id="score-label">0 of 14 confirmed</span>
+        <div class="meter"><span id="score-meter"></span></div>
+        <span class="val" id="score-val">0%</span>
+        <button class="btn btn-secondary btn-sm" id="reset-check">Reset</button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </div>
+  </section>
+</div><!-- /route-dfm -->
+
+
+<!-- ==================================================================
+     ROUTE · CASE DATA
+     ================================================================== -->
+<div class="route" id="route-case">
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">Field Evaluation · Power Supply Builder</span>
+        <h2>A real panel evaluation, component by component</h2>
+        <p>Two charger panels in one family: 5.4 million units a year, 1210 UPH combined. This is the actual verdict
+        table from the evaluation — including the components that could not be automated.</p>
+      </div>
+
+      <div class="grid g4 mb3">
+        <div class="card stat-card"><div class="big">5.4 M</div><div class="cap">Annual units, both panels</div></div>
+        <div class="card stat-card"><div class="big">1210</div><div class="cap">Combined UPH required</div></div>
+        <div class="card stat-card"><div class="big">38.3 s</div><div class="cap">10 W panel cycle time</div></div>
+        <div class="card stat-card"><div class="big">1.2 mm</div><div class="cap">Panel thickness</div></div>
+      </div>
+
+      <h3>Panel geometry and production requirement</h3>
+      <div class="table-wrap mb3">
+        <table>
+          <thead><tr><th>Parameter</th><th class="num">Charger 10 W</th><th class="num">Charger 20 W</th><th class="num">Combined</th></tr></thead>
+          <tbody>
+            <tr><td>Panel length × width</td><td class="num">157.4 × 124 mm</td><td class="num">185.5 × 157.65 mm</td><td class="num">—</td></tr>
+            <tr><td>Panel thickness</td><td class="num">1.2 mm</td><td class="num">1.2 mm</td><td class="num">—</td></tr>
+            <tr><td>Process edge width</td><td class="num">5.0 mm</td><td class="num">5.0 and 10.0 mm</td><td class="num">—</td></tr>
+            <tr><td>Units per panel</td><td class="num">12 (4×3)</td><td class="num">16 (4×4)</td><td class="num">—</td></tr>
+            <tr><td>Annual forecast</td><td class="num">4,200,000</td><td class="num">1,200,000</td><td class="num"><strong>5,400,000</strong></td></tr>
+            <tr><td>Required UPH</td><td class="num">940</td><td class="num">270</td><td class="num"><strong>1210</strong></td></tr>
+            <tr><td>Panel cycle time</td><td class="num">38.3 s</td><td class="num">177.8 s</td><td class="num">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout mb3">
+        <p><strong>Handling check.</strong> Both panels sit comfortably inside the handling window — well above the
+        100 × 80 mm minimum, well below the 483 × 406 mm maximum. At 1.2 mm thickness they are inside the
+        0.8–2.36 mm range for both BHS and SBT handling, so handling choice is not constrained by thickness here.
+        The 10 W panel is the throughput driver at 940 of the 1210 combined UPH.</p>
+      </div>
+
+      <h3>Component evaluation — Charger 10 W</h3>
+      <div class="table-wrap mb3">
+        <table>
+          <thead><tr><th>Ref</th><th>Component</th><th>Current pitch</th><th>Required</th><th>Hole dia (current &rarr; required)</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">EC101, EC102</td><td>Electrolytic capacitor</td><td>3.5 mm</td><td>5.0 mm</td><td class="num">1.6 &rarr; 1.083 mm</td><td><span class="badge warn">Adapt pitch</span></td></tr>
+            <tr><td class="mono">EC201</td><td>Electrolytic capacitor</td><td>2.5 ± 0.05 mm</td><td>2.5 mm</td><td class="num">1.35 &rarr; 0.983 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">EC202</td><td>Electrolytic capacitor</td><td>2.5 mm</td><td>2.5 mm</td><td class="num">—</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">EC103</td><td>Electrolytic capacitor</td><td>2.5 mm</td><td>2.5 mm</td><td class="num">1.0 &rarr; 0.883 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">CY101</td><td>Safety capacitor</td><td>10.0 ± 1.00 mm</td><td>10.0 mm</td><td class="num">1.05 &rarr; 1.083 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">L101</td><td>Axial inductor</td><td>Axial tape</td><td>5.0 mm radial</td><td class="num">1.6 &rarr; 0.983 mm</td><td><span class="badge warn">Change packaging</span></td></tr>
+            <tr><td class="mono">FR101</td><td>Fusible resistor</td><td>Bulk + heat-shrink</td><td>12.5 mm</td><td class="num">2.0 &rarr; 1.083 mm</td><td><span class="badge bad">Stays manual</span></td></tr>
+            <tr><td class="mono">USB1</td><td>USB-A connector</td><td>Odd-form, tray</td><td>—</td><td class="num">— &rarr; 1.483 mm</td><td><span class="badge bad">Odd-form platform</span></td></tr>
+            <tr><td class="mono">TR1</td><td>Transformer</td><td>Odd-form, tray</td><td>—</td><td class="num">—</td><td><span class="badge bad">Odd-form platform</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Component evaluation — Charger 20 W</h3>
+      <div class="table-wrap mb3">
+        <table>
+          <thead><tr><th>Ref</th><th>Component</th><th>Current pitch</th><th>Required</th><th>Hole dia (current &rarr; required)</th><th>Verdict</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">EC101, EC102</td><td>Electrolytic capacitor</td><td>5.0 ± 0.5 mm</td><td>5.0 mm</td><td class="num">1.1 &rarr; 1.16 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">EC201</td><td>Electrolytic capacitor</td><td>2.5 ± 0.5 mm</td><td>2.5 mm</td><td class="num">1.0 &rarr; 1.06 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">EC202</td><td>Electrolytic capacitor</td><td>2.5 ± 0.5 mm</td><td>2.5 mm</td><td class="num">1.0 &rarr; 1.10 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">EC105</td><td>Electrolytic capacitor</td><td>2.5 ± 0.5 mm</td><td>2.5 mm</td><td class="num">1.0 &rarr; 0.96 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">F101</td><td>Fuse</td><td>5.0 mm</td><td>5.0 mm</td><td class="num">0.9 &rarr; 1.16 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">RT101</td><td>Resistor</td><td>5.0 ± 0.5 mm</td><td>5.0 mm</td><td class="num">1.2 &rarr; 1.16 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">L101</td><td>Inductor</td><td>2.5 ± 0.5 mm (bulk)</td><td>2.5 mm</td><td class="num">1.0 &rarr; 1.16 mm</td><td><span class="badge warn">Change to radial tape</span></td></tr>
+            <tr><td class="mono">CY101</td><td>Capacitor</td><td>10.0 ± 0.8 mm</td><td>10.0 mm</td><td class="num">1.1 &rarr; 1.16 mm</td><td><span class="badge ok">Runs as-is</span></td></tr>
+            <tr><td class="mono">Q101</td><td>Transistor</td><td>2.3 ± 0.05 mm (stick)</td><td>2.0 mm</td><td class="num">0.9 &rarr; 1.06 mm</td><td><span class="badge bad">Stays manual</span></td></tr>
+            <tr><td class="mono">USB-A</td><td>USB-A connector</td><td>Odd-form, tray</td><td>—</td><td class="num">—</td><td><span class="badge bad">Odd-form platform</span></td></tr>
+            <tr><td class="mono">TR101</td><td>Transformer assembly</td><td>Odd-form, tray</td><td>—</td><td class="num">—</td><td><span class="badge bad">Odd-form platform</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The station plan</h3>
+      <div class="grid g3">
+        <div class="card ok">
+          <div class="kicker">Station 1</div>
+          <h3>Radial platform</h3>
+          <p>All taped, standard-pitch components. A 2.5 / 5.0 / 7.5 / 10.0 mm tooling envelope covers every pitch on
+          both panels without a tooling changeover — the reason the shared family works on one setup. Source of the
+          940 UPH figure.</p>
+        </div>
+        <div class="card accent">
+          <div class="kicker">Station 2</div>
+          <h3>Odd-form platform</h3>
+          <p>USB-A connector and transformer, both tray-supplied, both requiring gripper tooling rather than radial
+          insertion. Verify insertion force for the transformer during evaluation rather than commissioning.</p>
+        </div>
+        <div class="card warn">
+          <div class="kicker">Station 3</div>
+          <h3>Manual station — defined</h3>
+          <p>The fusible resistor with heat-shrink sleeving has no handling surface, and the transistor is supplied in
+          stick format at 2.3 mm pitch with no taped equivalent. Two operations, counted, not residual.</p>
+        </div>
+      </div>
+
+      <div class="callout mt3">
+        <p><strong>The verdict table is worth more than the quotation.</strong> It converts an open-ended automation
+        ambition into a specific scope: this many components on this platform, this many on that platform, this many
+        remain manual, this is the headcount. A line designed for the real component set hits its numbers. A line
+        designed for an optimistic component set does not — and the shortfall is usually blamed on the equipment.</p>
+      </div>
+    </div>
+  </section>
+</div><!-- /route-case -->
+
+
+<!-- ==================================================================
+     ROUTE · SURVEY
+     ================================================================== -->
+<div class="route" id="route-survey">
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">Requirement Form</span>
+        <h2>Tell us about your board, and we will return an insertion verdict</h2>
+        <p>Fill this in and send it to <a href="mailto:info@smthelp.com?subject=THT%20Design%20Guide%20-%20Board%20Evaluation%20Request">info@smthelp.com</a>.
+        Everything we need is here — the same fields we use in field evaluation. Items you cannot answer are listed as
+        open questions rather than filled with defaults.</p>
+      </div>
+
+      <div class="grid g2">
+        <div>
+          <h3 class="mt0">A · Customer and equipment environment</h3>
+          <div class="table-wrap mb2">
+            <table>
+              <thead><tr><th>#</th><th>Item</th><th>Your answer</th></tr></thead>
+              <tbody>
+                <tr><td class="num">1</td><td>Is the equipment produced inline (connected to an existing line)?</td><td></td></tr>
+                <tr><td class="num">2</td><td>PCB loading method</td><td></td></tr>
+                <tr><td class="num">3</td><td>PCB receiving / unloading method</td><td></td></tr>
+                <tr><td class="num">4</td><td>Do you use a board fixture (pallet) to carry the PCB?</td><td></td></tr>
+                <tr><td class="num">5</td><td>Fixture size L × W × thickness (mm)</td><td></td></tr>
+                <tr><td class="num">6</td><td>Fixture weight (kg)</td><td></td></tr>
+                <tr><td class="num">7</td><td>Maximum inserted component height (mm)</td><td></td></tr>
+                <tr><td class="num">8</td><td>Minimum component specification (mm)</td><td></td></tr>
+                <tr><td class="num">9</td><td>Capacity requirement (pcs/h)</td><td></td></tr>
+                <tr><td class="num">10</td><td>PCB transfer direction (L→R / R→L / same side in-out)</td><td></td></tr>
+                <tr><td class="num">11</td><td>PCB maximum size L × W (mm)</td><td></td></tr>
+                <tr><td class="num">12</td><td>PCB minimum size L × W (mm)</td><td></td></tr>
+                <tr><td class="num">13</td><td>PCB board thickness (mm)</td><td></td></tr>
+                <tr><td class="num">14</td><td>PCB component height, maximum (mm)</td><td></td></tr>
+                <tr><td class="num">15</td><td>PCB board edge (process edge) size (mm)</td><td></td></tr>
+                <tr><td class="num">16</td><td>Is the PCB panelised?</td><td></td></tr>
+                <tr><td class="num">17</td><td>Maximum weight of PCB single board or panel (kg)</td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="mt0">B · Quality, materials and process</h3>
+          <div class="table-wrap mb2">
+            <table>
+              <thead><tr><th>#</th><th>Item</th><th>Your answer</th></tr></thead>
+              <tbody>
+                <tr><td class="num">18</td><td>Is PCB incoming material consistency acceptable (tolerance, batch consistency)?</td><td></td></tr>
+                <tr><td class="num">19</td><td>Can you provide PCB technical specifications?</td><td></td></tr>
+                <tr><td class="num">20</td><td>Is the positioning between fixture and PCB loose?</td><td></td></tr>
+                <tr><td class="num">21</td><td>Minimum pitch of DIP components (mm)</td><td></td></tr>
+                <tr><td class="num">22</td><td>Are material specification requirements confirmed (tolerance, consistency)?</td><td></td></tr>
+                <tr><td class="num">23</td><td>Can you provide component technical specifications, especially tolerance range?</td><td></td></tr>
+                <tr><td class="num">24</td><td>Can the finished board and the bare board be mounted before insertion?</td><td></td></tr>
+                <tr><td class="num">25</td><td>Machine track height (standard 750 mm ± 30 mm)</td><td></td></tr>
+                <tr><td class="num">26</td><td>Do you need a conveyor between machines?</td><td></td></tr>
+                <tr><td class="num">27</td><td>Can you supply enough material for machine trial?</td><td></td></tr>
+                <tr><td class="num">28</td><td>Are operators and technicians available for debugging and maintenance?</td><td></td></tr>
+                <tr><td class="num">29</td><td>How often do you change lines?</td><td></td></tr>
+                <tr><td class="num">30</td><td>Do you have 380 V supply and a clean, dry, stable air source?</td><td></td></tr>
+                <tr><td class="num">31</td><td>Maximum elevator interior size W × D (mm)</td><td></td></tr>
+                <tr><td class="num">32</td><td>Maximum empty load in the elevator (kg)</td><td></td></tr>
+                <tr><td class="num">33</td><td>Equipment placement space L × W × H (mm)</td><td></td></tr>
+                <tr><td class="num">34</td><td>Workshop floor load-bearing capacity (suggest ≥ 500 kg/m²)</td><td></td></tr>
+                <tr><td class="num">35</td><td>Workshop floor type</td><td></td></tr>
+                <tr><td class="num">36</td><td>Other requirements</td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <h3>C · Equipment configuration</h3>
+      <div class="table-wrap mb2">
+        <table>
+          <thead><tr><th>#</th><th>Equipment / feeder</th><th>Model</th><th>Quantity</th></tr></thead>
+          <tbody>
+            <tr><td class="num">1</td><td>Insertion machine</td><td class="mono">S-7000 / S3010A / S7020T / S7900</td><td></td></tr>
+            <tr><td class="num">2</td><td>Taping feeder (radial / axial)</td><td></td><td></td></tr>
+            <tr><td class="num">3</td><td>Tubular feeder</td><td></td><td></td></tr>
+            <tr><td class="num">4</td><td>Bowl feeder</td><td></td><td></td></tr>
+            <tr><td class="num">5</td><td>Tray feeder</td><td></td><td></td></tr>
+            <tr><td class="num">6</td><td>Test machine samples</td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid g2">
+        <div class="card ok">
+          <h3>What to send with this form</h3>
+          <ol style="margin:0;padding-left:20px;color:var(--slate);font-size:14.5px">
+            <li>A front-view high-definition image of the PCB</li>
+            <li>Your capacity requirement</li>
+            <li>A physical sample, an empty board, and 3–5 pieces of each component to be inserted</li>
+            <li>The direction of passing through the reflow oven and the height from the ground</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>Component specification table</h3>
+          <p class="small mb1">For each through-hole component, provide:</p>
+          <div class="pill-row">
+            <span class="badge neutral">Part number</span>
+            <span class="badge neutral">Reference designator</span>
+            <span class="badge neutral">Description</span>
+            <span class="badge neutral">Polarity required</span>
+            <span class="badge neutral">Packaging</span>
+            <span class="badge neutral">Pre-step needed</span>
+            <span class="badge neutral">Pre-form</span>
+            <span class="badge neutral">Lead diameter</span>
+            <span class="badge neutral">Lead pitch</span>
+          </div>
+          <p class="small mt1">Two summary figures matter most: <strong>material type count</strong> and
+          <strong>material insertion count</strong>. They determine feeder configuration and cycle-time budget.</p>
+        </div>
+      </div>
+
+      <div class="center mt3">
+        <a class="btn btn-primary" href="mailto:info@smthelp.com?subject=THT%20Design%20Guide%20-%20Board%20Evaluation%20Request&body=Please%20find%20attached%20our%20PCB%20information.%0A%0AAnnual%20volume%3A%0ACapacity%20requirement%20(UPH)%3A%0APanel%20size%20L%20x%20W%20x%20T%3A%0AUnits%20per%20panel%3A%0AProcess%20edge%3A%0A%0AComponent%20list%20attached%3A%20yes%2Fno">Email this form to info@smthelp.com</a>
+      </div>
+    </div>
+  </section>
+</div><!-- /route-survey -->
+
+
+<!-- ==================================================================
+     ROUTE · BLOG
+     ================================================================== -->
+<div class="route" id="route-blog">
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">Insights</span>
+        <h2>Field notes on through-hole automation</h2>
+        <p>Ten articles on the design and process decisions that decide whether a THT line reaches rated speed.
+        Written from panel evaluations and line commissioning, not from a brochure.</p>
+      </div>
+      <div class="blog-grid" id="blog-grid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- ==================================================================
+     ROUTE · POST
+     ================================================================== -->
+<div class="route" id="route-post">
+  <section class="section">
+    <div class="container">
+      <div class="article" id="post-body"></div>
+    </div>
+  </section>
+</div>
+
+
+<!-- ==================================================================
+     ROUTE · MEDIA
+     ================================================================== -->
+<div class="route" id="route-media">
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">Video Library</span>
+        <h2>Machine videos from the Southern Machinery YouTube channel</h2>
+        <p>Selected from 1,248 published videos across 14 categories on the
+        <a href="https://www.youtube.com/c/Smthelping" target="_blank" rel="noopener">Smthelping channel</a>.
+        Filter by application below.</p>
+      </div>
+      <div class="filter-bar" id="video-filters"></div>
+      <div class="video-grid" id="video-grid"></div>
+      <p class="small mt2">Browse the complete video board at
+        <a href="https://file.autoinsertion.com/public/Southern-Machinery-YouTube-Video-Board.html" target="_blank" rel="noopener">file.autoinsertion.com</a>.</p>
+    </div>
+  </section>
+
+  <section class="section soft">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">Product Catalog</span>
+        <h2>Datasheets, manuals and 3D previews</h2>
+        <p>Straight from the Southern Machinery product catalog board. Every link opens the actual asset.</p>
+      </div>
+      <div class="filter-bar" id="catalog-filters"></div>
+      <div class="catalog-list" id="catalog-list"></div>
+      <p class="small mt2">Full catalog board:
+        <a href="https://file.autoinsertion.com/public/Southern-Machinery-Product-Catalog-Board.html" target="_blank" rel="noopener">Southern-Machinery-Product-Catalog-Board</a></p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">Machine Gallery</span>
+        <h2>Equipment from the Southern Machinery photo library</h2>
+        <p>Hosted on <a href="https://ph.smthelp.com" target="_blank" rel="noopener">ph.smthelp.com</a>.</p>
+      </div>
+      <div class="gallery" id="gallery-main"></div>
+    </div>
+  </section>
+</div><!-- /route-media -->
+
+
+<!-- ==================================================================
+     ROUTE · TOOLS
+     ================================================================== -->
+<div class="route" id="route-tools">
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag">ROI Tools</span>
+        <h2>Model the payback before you model the line</h2>
+        <p>Ready-to-use calculators and worksheets from the Southern Machinery resource library. Download, fill in
+        your own numbers, and see whether automation clears your hurdle rate.</p>
+      </div>
+      <div class="grid g3 mb3">
+        <div class="card">
+          <div class="kicker">Spreadsheet</div>
+          <h3>THT Insertion ROI Calculator</h3>
+          <p>Model payback from labour rate, shift pattern and insertion volume. The full version with sensitivity on
+          volume and headcount.</p>
+          <p class="mt1"><a class="view-link" href="https://file.autoinsertion.com/public/Blog%20file/THT-Insertion-ROI-Calculator.xlsx" target="_blank" rel="noopener">Download .xlsx &rarr;</a></p>
+        </div>
+        <div class="card">
+          <div class="kicker">Spreadsheet</div>
+          <h3>THT Auto Insertion ROI Worksheet</h3>
+          <p>The simplified worksheet version — useful for first-pass screening before committing to a full evaluation.</p>
+          <p class="mt1"><a class="view-link" href="https://file.autoinsertion.com/public/Blog%20file/THT-Auto-Insertion-ROI-Worksheet.xlsx" target="_blank" rel="noopener">Download .xlsx &rarr;</a></p>
+        </div>
+        <div class="card">
+          <div class="kicker">Spreadsheet</div>
+          <h3>THT Staffing Audit Calculator</h3>
+          <p>Quantify manual insertion headcount before and after automation, including the operations that will
+          remain manual.</p>
+          <p class="mt1"><a class="view-link" href="https://file.autoinsertion.com/public/Blog%20file/tht-staffing-audit-calculator.xlsx" target="_blank" rel="noopener">Download .xlsx &rarr;</a></p>
+        </div>
+        <div class="card">
+          <div class="kicker">PDF checklist</div>
+          <h3>Auto Insertion Readiness Checklist</h3>
+          <p>The pre-project gate: is this board actually ready for auto insertion? Use before commissioning any
+          evaluation.</p>
+          <p class="mt1"><a class="view-link" href="https://file.autoinsertion.com/public/Blog%20file/auto-insertion-readiness-checklist.pdf" target="_blank" rel="noopener">Download .pdf &rarr;</a></p>
+        </div>
+        <div class="card">
+          <div class="kicker">Landing page</div>
+          <h3>THT Auto Insertion Machine Solution</h3>
+          <p>Full line overview for high-mix EMS factories — machine combination, feeder configuration and
+          throughput expectations.</p>
+          <p class="mt1"><a class="view-link" href="https://file.autoinsertion.com/public/Product%20landing%20Page/THT-Auto-Insertion-Machine-Solution-Landing.html" target="_blank" rel="noopener">Open page &rarr;</a></p>
+        </div>
+        <div class="card">
+          <div class="kicker">Landing page</div>
+          <h3>S3010A Radial Auto Insertion</h3>
+          <p>The radial platform behind the 2.5 / 5.0 / 7.5 / 10.0 mm tooling envelope described in this guide.</p>
+          <p class="mt1"><a class="view-link" href="https://file.autoinsertion.com/public/Product%20landing%20Page/S3010A-Radial-Auto-Insertion-Landing.html" target="_blank" rel="noopener">Open page &rarr;</a></p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>A note on ROI numbers.</strong> These tools produce estimates from the inputs you supply. They are
+        not a quotation and they do not include tooling, freight, duty or installation. For a verified figure against
+        your actual component set, use the requirement form — the difference between an estimate and a verified
+        evaluation is usually the difference between a project that hits its numbers and one that does not.</p>
+      </div>
+    </div>
+  </section>
+</div><!-- /route-tools -->
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <img src="https://ph.smthelp.com/images/2024/06/26/Southern-Machinery-logo-300x83.png"
+             alt="Southern Machinery" style="height:38px;margin-bottom:16px;filter:brightness(0) invert(1)">
+        <p style="margin:0 0 12px">
+          Southern Machinery Sales And Service Co Limited — specialised in the design and manufacture of
+          SMT and THT machines for the Smart EMS factory.
+        </p>
+        <p style="margin:0" class="small">
+          Radial · Axial · Odd-form · Terminal &amp; riveting · Board handling · Wave &amp; selective soldering
+        </p>
+      </div>
+
+      <div>
+        <h4>Design Guide</h4>
+        <ul>
+          <li><a href="#/guide">Board considerations</a></li>
+          <li><a href="#/guide">Axial insertion rules</a></li>
+          <li><a href="#/guide">Radial insertion rules</a></li>
+          <li><a href="#/guide">DIP insertion rules</a></li>
+          <li><a href="#/dfm">DFM checker</a></li>
+          <li><a href="#/case">Case data</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Follow Southern Machinery</h4>
+        <div class="social">
+          <a href="https://www.linkedin.com/company/smtmachine" target="_blank" rel="noopener">
+            <span class="ico">in</span> LinkedIn Company Page
+          </a>
+          <a href="https://cn.linkedin.com/in/smtsupplier" target="_blank" rel="noopener">
+            <span class="ico">in</span> LinkedIn Profile
+          </a>
+          <a href="https://twitter.com/smtspecialist" target="_blank" rel="noopener">
+            <span class="ico">X</span> Twitter
+          </a>
+          <a href="https://www.facebook.com/autoinsertion" target="_blank" rel="noopener">
+            <span class="ico">f</span> Facebook
+          </a>
+          <a href="https://www.youtube.com/c/Smthelping" target="_blank" rel="noopener">
+            <span class="ico">&#9654;</span> YouTube Channel
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Contact us</h4>
+        <div class="contact-box">
+          <p style="margin:0 0 6px">Talk to an engineer about your board.</p>
+          <p style="margin:0"><a href="mailto:info@smthelp.com" style="font-weight:600">info@smthelp.com</a></p>
+          <a class="wa" href="https://wa.me/8613602562576" target="_blank" rel="noopener">
+            <span>&#9993;</span> WhatsApp +86 136 0256 2576
+          </a>
+          <p class="small" style="margin:12px 0 0">
+            <a href="https://www.smthelp.com" target="_blank" rel="noopener">www.smthelp.com</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <p class="browse-line">
+      Browse our machine catalog at <a href="https://file.autoinsertion.com" target="_blank" rel="noopener">file.autoinsertion.com</a>
+      and find machine photos at <a href="https://ph.smthelp.com" target="_blank" rel="noopener">ph.smthelp.com</a>.
+    </p>
+
+    <div class="bottom">
+      <span>© <span id="yr">2026</span> Southern Machinery Sales And Service Co Limited. All rights reserved.</span>
+      <span>Design guideline values compiled from Universal Instruments GS-354-01 and Southern Machinery field data. Specifications subject to change without notice.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+
+<!-- Smart support — Southern Machinery Global Support -->
+<script>
+window.chatwootSettings = {"position":"right","type":"standard","launcherTitle":"Southern Machinery Global Support"};
+(function(d,t) {
+// Protocol-adaptive: browsers block http:// scripts on https:// pages (mixed content).
+// Use https when the page is served over https (e.g. GitHub Pages), http otherwise.
+var BASE_URL=(location.protocol==="https:"?"https://":"http://")+"chat.smthelp.com";
+var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+g.src=BASE_URL+"/packs/js/sdk.js";
+g.async = true;
+s.parentNode.insertBefore(g,s);
+g.onload=function(){
+window.chatwootSDK.run({
+websiteToken: 'saMcpgSupcmd1VQwytgPLfbK',
+baseUrl: BASE_URL
+})
+}
+})(document,"script");
+</script>
+
+</body>
+</html>
