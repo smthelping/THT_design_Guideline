@@ -389,6 +389,27 @@ td.num, th.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .static-article p { font-size: 16.5px; margin: 0 0 15px; }
 .static-article li { font-size: 16px; }
 
+/* ---------- Key terms + FAQ (static, crawler-readable) ----------
+   Both blocks are plain static HTML: the key terms are definition sentences in
+   the "X is Y" form so an answer engine can lift them verbatim, and the FAQ
+   answers carry the same questions as the FAQPage JSON-LD in <head>.
+   NOTE: the definition paragraphs must stay free of inline markup — a <strong>
+   inside one breaks the sentence shape the structured data relies on. */
+.key-terms { margin-top: 62px; }
+.key-terms > h2 { font-size: 22px; letter-spacing: -.015em; margin: 0 0 8px; }
+.key-terms > p:not(.sa-intro) {
+  font-size: 16.5px; margin: 0 0 11px; padding-left: 16px;
+  border-left: 2px solid var(--line); max-width: 880px;
+}
+.faq-list { margin-top: 62px; }
+.faq-list > h2 { font-size: 22px; letter-spacing: -.015em; margin: 0 0 8px; }
+.faq-item { padding-top: 36px; margin-top: 36px; border-top: 1px solid var(--line); }
+.faq-item:first-of-type { padding-top: 30px; margin-top: 30px; }
+.faq-item > h3 { font-size: clamp(19px, 2.3vw, 25px); line-height: 1.28; letter-spacing: -.018em; margin: 0 0 12px; }
+.faq-item p { font-size: 16.5px; margin: 0 0 13px; max-width: 880px; }
+.faq-item ul { margin: 0 0 14px; padding-left: 22px; max-width: 880px; }
+.faq-item li { font-size: 16px; margin-bottom: 6px; }
+
 /* ---------- Steps / flow ---------- */
 .steps { display: grid; gap: 0; counter-reset: s; }
 .step {

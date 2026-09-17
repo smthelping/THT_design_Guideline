@@ -37,7 +37,7 @@
   /* ======================================================================
      ROUTER
      ====================================================================== */
-  var ROUTES = ["guide", "dfm", "case", "survey", "blog", "post", "media", "tools"];
+  var ROUTES = ["guide", "faq", "dfm", "case", "survey", "blog", "post", "media", "tools"];
 
   function route() {
     var h = (location.hash || "#/guide").replace(/^#\/?/, "");

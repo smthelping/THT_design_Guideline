@@ -97,6 +97,131 @@
       "author": { "@id": "https://dgl.smthelp.eu/#organization" },
       "publisher": { "@id": "https://dgl.smthelp.eu/#organization" },
       "about": ["Through Hole Technology", "PCB Design for Manufacturing", "Automatic Component Insertion"]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://dgl.smthelp.eu/#website",
+      "url": "https://dgl.smthelp.eu/",
+      "name": "THT Design Guide — Southern Machinery",
+      "description": "Through-hole design rules for automatic insertion, with DFM calculators and ROI tools.",
+      "inLanguage": "en",
+      "publisher": { "@id": "https://dgl.smthelp.eu/#organization" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://dgl.smthelp.eu/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "THT Design Guide", "item": "https://dgl.smthelp.eu/" },
+        { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://dgl.smthelp.eu/#/faq" }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "@id": "https://dgl.smthelp.eu/#howto-board-setup",
+      "name": "How to prepare a through-hole board for automatic insertion",
+      "description": "The order of decisions that determines whether a board reaches rated speed on a radial, axial or DIP insertion machine. Derived from Universal Instruments GS-354-01.",
+      "inLanguage": "en",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Place the datum holes",
+          "text": "Position the datum holes with the longest lateral span between them, and standardise their diameter and spacing so a job changeover does not require a new setup. Every other hole is drilled or punched relative to these references."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Set the hole diameters from the maximum lead diameter",
+          "text": "Use maximum lead diameter + 0.48 mm (0.019 in) for leads captured by the insertion tooling, and + 0.58 mm (0.023 in) for unguided leads such as potentiometer or SIP outer leads. Both carry a tolerance of ±0.08 mm (0.003 in)."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Check the minimum hole span on every axial component",
+          "text": "Apply the tooling-class formula and subtract the lead diameter: standard tooling (body length × 1.112) + 2.36 mm, large lead tooling (body length × 1.085) + 4.11 mm, 5 mm tooling (body length × 1.109) + 1.40 mm, 5.5 mm tooling (body length × 1.067) + 2.30 mm. Subtract a further 0.41 mm (0.016 in) from the body length for non-symmetrical components."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "Allow the tooling footprint around each hole",
+          "text": "The outside formers that guide a lead to its hole need clearance from any adjacent component body or lead. Without it the head cannot reach the insertion point."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 5,
+          "name": "Keep thickness and flatness inside the machine window",
+          "text": "Radial, axial and DIP insertion accept 0.8 mm to 2.36 mm (0.032 in to 0.093 in); SBT board handling narrows this to 1.52 mm to 2.36 mm (0.060 in to 0.093 in). Minimise warpage, which causes board transfer errors and reduces insertion performance."
+        },
+        {
+          "@type": "HowToStep",
+          "position": 6,
+          "name": "Panelise small boards",
+          "text": "Group small boards into multiple breakaway panels or arrays to raise throughput, and standardise the panel size to reduce setup time during job changeover."
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://dgl.smthelp.eu/#faq",
+      "inLanguage": "en",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What hole diameter should a through-hole component use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Drill from the maximum lead diameter, not the nominal one. A guided lead takes a hole of maximum lead diameter + 0.48 mm (0.019 in), tolerance ±0.08 mm (0.003 in). Unguided leads, such as potentiometer or SIP outer leads, need maximum lead diameter + 0.58 mm (0.023 in), also ±0.08 mm. Holes smaller than the recommendation degrade insertion reliability; holes larger than it leave the component loose in the board."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is the minimum hole span calculated for an axial component?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It depends on the tooling class, and all four formulas subtract the lead diameter. Standard tooling: (body length × 1.112) + 2.36 mm. Large lead tooling: (body length × 1.085) + 4.11 mm. 5 mm tooling: (body length × 1.109) + 1.40 mm. 5.5 mm tooling: (body length × 1.067) + 2.30 mm. For non-symmetrical components subtract a further 0.41 mm (0.016 in) from the body length. Design to a span greater than the calculated minimum."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What board thickness can automatic insertion handle?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Radial, axial and DIP insertion all accept 0.8 mm to 2.36 mm (0.032 in to 0.093 in), the same range as BHS board handling. SBT board handling narrows the window to 1.52 mm to 2.36 mm (0.060 in to 0.093 in), so a 1.0 mm board cannot run on an SBT line."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much board warpage is acceptable?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The guideline sets no numeric limit; it states that warpage should be minimised. Warpage causes board transfer errors and reduces insertion performance, so it is treated as a defect to be eliminated rather than a tolerance to be spent."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which board materials can be auto-inserted?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Glass epoxy, paper epoxy and paper phenolic. The list is explicitly not exhaustive, because the constraint is geometry rather than chemistry: as long as the material meets the size, shape, form and positional accuracy requirements, insertion is reliable."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why do datum holes matter more than any other board feature?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every hole is drilled or punched relative to the datum holes, and the same references position the board on the workboard holder. The datum is therefore the largest single contributor to tolerance accumulation — an error there shifts every component on the board. Place them with the longest lateral span between them and standardise diameter and spacing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if the insertion span varies between consecutive components?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Lead scrap. On the 6295, 6292 and 6287 series machines the span within five consecutive insertions must not vary by more than 10 mm (0.400 in) from the lesser to the greater; on the 6241 the limit is 5 mm (0.200 in) across two consecutive insertions. At a 5 mm insertion span the maximum lead diameter is 0.61 mm (0.024 in)."
+          }
+        }
+      ]
     }
   ]
 }
@@ -114,6 +239,7 @@
     <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">&#9776;</button>
     <nav class="nav" id="nav">
       <a href="#/guide" data-nav="guide" data-i18n="design-guide">Design Guide</a>
+      <a href="#/faq" data-nav="faq" data-i18n="faq">FAQ</a>
       <a href="#/dfm" data-nav="dfm" data-i18n="dfm-check">DFM Check</a>
       <a href="#/case" data-nav="case" data-i18n="case-data">Case Data</a>
       <a href="#/survey" data-nav="survey" data-i18n="requirement-form">Requirement Form</a>
@@ -663,6 +789,93 @@ C = √(0.64² + 0.38²) = <span class="hl" data-i18n="0-74-mm">0.74 mm</span>
   </section>
 
 </div><!-- /route-guide -->
+
+
+<!-- ==================================================================
+     ROUTE · FAQ
+     ================================================================== -->
+<div class="route" id="route-faq">
+  <section class="section">
+    <div class="container">
+      <div class="sec-head">
+        <span class="tag" data-i18n="faq-tag">Reference</span>
+        <h2 data-i18n="faq-title">Questions asked before a line is specified</h2>
+        <p data-i18n="faq-intro">Every answer below comes from Universal Instruments GS-354-01, the design guideline Southern Machinery applies when evaluating a board for automatic insertion. Where a rule carries a number, the number is the one in that document.</p>
+      </div>
+
+      <!-- GEO-KEY-TERMS:START — definition sentences, plain <p> so the "X is Y"
+           form survives intact. Do not add inline markup to these paragraphs:
+           the whole point is that an answer engine can lift the sentence as-is. -->
+      <div class="key-terms" id="key-terms">
+        <h2 data-i18n="key-terms">Key terms</h2>
+        <p class="sa-intro" data-i18n="key-terms-intro">Nine terms that recur throughout the design rules, each defined in the sense the guideline uses it.</p>
+<p>Clearance is the free space an insertion head needs around a hole to reach the board.</p>
+<p>Warpage is any deviation of a board from a flat plane, which reduces insertion reliability.</p>
+<p>Panelisation is the grouping of small boards into one breakaway array to raise throughput.</p>
+<p>Datum is the reference hole pattern that positions the board for every drilled hole.</p>
+<p>Pitch is the centre-to-centre distance between two adjacent component holes.</p>
+<p>Clinching is the operation that trims a component lead and bends it against the pad.</p>
+<p>Tooling is the set of jaws, formers and anvils that handle one range of lead sizes.</p>
+<p>Taping is the packaging of components on a tape whose hole spacing sets the pitch.</p>
+<p>Sequencing is the arrangement of components in the order the machine will insert them.</p>
+      </div>
+      <!-- GEO-KEY-TERMS:END -->
+
+      <!-- GEO-FAQ:START — the questions here are the same questions carried in
+           the FAQPage JSON-LD in <head>. Keep the two in step: marking up an
+           answer that is not on the page is a structured-data violation. -->
+      <div class="faq-list" id="faq-list">
+        <h2 data-i18n="faq-questions">Frequently asked questions</h2>
+
+        <article class="faq-item">
+          <h3>What hole diameter should a through-hole component use?</h3>
+          <p>Drill from the maximum lead diameter, not the nominal one. A lead captured by the insertion tooling — a guided lead — takes a hole of maximum lead diameter + 0.48&nbsp;mm (0.019&nbsp;in), with a tolerance of ±0.08&nbsp;mm (0.003&nbsp;in). Unguided leads, such as the outer leads of a potentiometer or a SIP, need more room at maximum lead diameter + 0.58&nbsp;mm (0.023&nbsp;in), also ±0.08&nbsp;mm.</p>
+          <p>Holes smaller than the recommendation degrade insertion reliability; holes larger than it leave the component loose in the board. For maximum lead diameter, use whichever of the datasheet values Nd, Nd1, Nd2 or Nd3 is largest.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>How is the minimum hole span calculated for an axial component?</h3>
+          <p>The formula depends on the tooling class, because each class forms the lead differently. All four subtract the lead diameter from the result:</p>
+          <ul>
+            <li>Standard tooling: (component body length × 1.112) + 2.36&nbsp;mm</li>
+            <li>Large lead tooling: (component body length × 1.085) + 4.11&nbsp;mm</li>
+            <li>5&nbsp;mm tooling: (component body length × 1.109) + 1.40&nbsp;mm</li>
+            <li>5.5&nbsp;mm tooling: (component body length × 1.067) + 2.30&nbsp;mm</li>
+          </ul>
+          <p>For non-symmetrically shaped components, subtract a further 0.41&nbsp;mm (0.016&nbsp;in) from the maximum body length. Design to a span greater than the calculated minimum, because body lengths vary between suppliers and the driver tips can damage a body that sits too close to its neighbour.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>What board thickness can automatic insertion handle?</h3>
+          <p>Radial, axial and DIP insertion all accept 0.8&nbsp;mm to 2.36&nbsp;mm (0.032&nbsp;in to 0.093&nbsp;in). The same range applies with BHS board handling. SBT board handling narrows the window to 1.52&nbsp;mm to 2.36&nbsp;mm (0.060&nbsp;in to 0.093&nbsp;in), so a 1.0&nbsp;mm board cannot run on an SBT line.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>How much board warpage is acceptable?</h3>
+          <p>The guideline sets no numeric limit — it states that warpage should be minimised. The reason is mechanical rather than cosmetic: warpage causes board transfer errors and reduces insertion performance. Treat it as a defect to be eliminated, not a tolerance to be spent.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>Which board materials can be auto-inserted?</h3>
+          <p>Glass epoxy, paper epoxy and paper phenolic. The guideline's list is explicitly not exhaustive, because the real constraint is geometry rather than chemistry: as long as the material meets the size, shape, form and positional accuracy requirements, insertion is reliable.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>Why do datum holes matter more than any other board feature?</h3>
+          <p>Every hole is drilled or punched relative to the datum holes, and the same references position the board on the workboard holder. That makes the datum the largest single contributor to tolerance accumulation — an error there shifts every component on the board, not just one.</p>
+          <p>Place the datum holes with the longest lateral span between them, and standardise their diameter and spacing so a job changeover does not require a new setup.</p>
+        </article>
+
+        <article class="faq-item">
+          <h3>What happens if the insertion span varies between consecutive components?</h3>
+          <p>Lead scrap. On the 6295, 6292 and 6287 series machines the span within five consecutive insertions must not vary by more than 10&nbsp;mm (0.400&nbsp;in) from the lesser to the greater; on the 6241 the limit is 5&nbsp;mm (0.200&nbsp;in) across two consecutive insertions. Throughput can be affected as well.</p>
+          <p>Where components are inserted at a 5&nbsp;mm span, the maximum lead diameter is 0.61&nbsp;mm (0.024&nbsp;in).</p>
+        </article>
+      </div>
+      <!-- GEO-FAQ:END -->
+    </div>
+  </section>
+</div><!-- /route-faq -->
 
 
 <!-- ==================================================================

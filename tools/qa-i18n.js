@@ -63,7 +63,7 @@ const degenerate = (e, v) => {
 // standard technology / industry acronyms. A hit here means the translation is
 // right and the checker is wrong — extend this list rather than "fixing" a
 // translation that legitimately keeps the term.
-const BRANDS = /\b(Panasonic|Yamaha|Fuji|JUKI|Samsung|Hitachi|ASM|Siemens|Hanwha|Sanyo|Mirae|Casio|Assembleon|Sony|Universal|YouTube|Google|Chatwoot|LinkedIn|Twitter|Facebook|WhatsApp|JavaScript|TypeScript|HTML|CSS|JSON|XML|HTTP|HTTPS|URL|API|PDF|CSV|Excel|Gerber|DXF|Open|pallet|PCB|SMT|THT|LED|SMD|DIP|USB|CAD|ROI|CPH|UPH|ESD|PPU|DFM|FAQ|IPC|J-STD|IEC|AMR|BHS|SBT)\b/i;
+const BRANDS = /\b(Panasonic|Yamaha|Fuji|JUKI|Samsung|Hitachi|ASM|Siemens|Hanwha|Sanyo|Mirae|Casio|Assembleon|Sony|Universal|Southern|Machinery|SMThelp|YouTube|Google|Chatwoot|LinkedIn|Twitter|Facebook|WhatsApp|JavaScript|TypeScript|HTML|CSS|JSON|XML|HTTP|HTTPS|URL|API|PDF|CSV|Excel|Gerber|DXF|Open|pallet|PCB|SMT|THT|LED|SMD|DIP|USB|CAD|ROI|CPH|UPH|ESD|PPU|DFM|FAQ|IPC|J-STD|IEC|AMR|BHS|SBT)\b/i;
 
 LANGS.forEach(L => {
   const dom = loadFile("assets/js/i18n/" + L + ".js", "I18N")[L] || {};

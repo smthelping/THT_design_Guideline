@@ -363,5 +363,88 @@ check("static-articles heading restores to English", key(dom, "full-articles") =
       key(dom, "full-articles"));
 
 /* ------------------------------------------------------------------ */
+section("13 - FAQ route + structured data (GEO P1)");
+setLang(dom, "en");
+
+// ---- the route itself
+const appSrc = read("assets/js/app.js");
+check("faq registered in ROUTES", /var ROUTES = \[[^\]]*"faq"/.test(appSrc));
+check("faq route container present", /<div class="route" id="route-faq">/.test(source));
+check("nav links to #/faq", /href="#\/faq"[^>]*data-nav="faq"/.test(source));
+
+go(dom, "#/faq");
+check("no uncaught errors navigating to #/faq", dom.__errors.length === 0, dom.__errors[0]);
+check("route-faq becomes active", d.getElementById("route-faq").classList.contains("active"));
+check("route-guide deactivated on #/faq", !d.getElementById("route-guide").classList.contains("active"));
+check("nav highlights the FAQ entry", d.querySelector('[data-nav="faq"]').classList.contains("active"));
+go(dom, "#/guide");
+
+// ---- the JSON-LD graph
+const ldMatch = source.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+check("JSON-LD block present", !!ldMatch);
+let graph = [];
+if (ldMatch) { try { graph = JSON.parse(ldMatch[1])["@graph"] || []; } catch (e) { graph = []; } }
+check("JSON-LD parses as valid JSON", graph.length > 0, graph.length + " nodes");
+const nodeOf = t => graph.find(n => n["@type"] === t);
+["Organization", "TechArticle", "WebSite", "BreadcrumbList", "HowTo", "FAQPage"]
+  .forEach(t => check("JSON-LD declares " + t, !!nodeOf(t)));
+
+// ---- the anti-cloaking guard.
+// Marking up a question the reader cannot see is a structured-data violation,
+// not a scoring win — so the two lists have to match in BOTH directions.
+const faqNode = nodeOf("FAQPage");
+const questions = faqNode ? faqNode.mainEntity.map(q => q.name) : [];
+const h3s = Array.prototype.slice.call(d.querySelectorAll("#route-faq .faq-item > h3"))
+  .map(h => h.textContent.trim());
+check("FAQPage carries 7 questions", questions.length === 7, String(questions.length));
+check("every FAQPage question is a visible heading",
+      questions.length > 0 && questions.every(q => h3s.indexOf(q) >= 0),
+      questions.filter(q => h3s.indexOf(q) < 0).slice(0, 2).join(" | "));
+check("no visible FAQ heading is missing from the JSON-LD",
+      h3s.every(h => questions.indexOf(h) >= 0),
+      h3s.filter(h => questions.indexOf(h) < 0).slice(0, 2).join(" | "));
+check("every FAQPage answer carries real text",
+      faqNode ? faqNode.mainEntity.every(q => (q.acceptedAnswer && q.acceptedAnswer.text || "").length > 60) : false);
+check("every visible FAQ item carries an answer paragraph",
+      Array.prototype.slice.call(d.querySelectorAll("#route-faq .faq-item"))
+        .every(a => a.querySelector("p")));
+
+// ---- HowTo
+const howNode = nodeOf("HowTo");
+check("HowTo carries 6 ordered steps",
+      howNode ? howNode.step.length === 6 && howNode.step.every((s, i) => s.position === i + 1) : false,
+      howNode ? String(howNode.step.length) : "");
+check("BreadcrumbList carries 2 ordered items",
+      nodeOf("BreadcrumbList") ? nodeOf("BreadcrumbList").itemListElement.length === 2 : false);
+
+// ---- definition sentences: the "X is Y" shape an answer engine can lift whole.
+// These paragraphs must stay free of inline markup or the sentence breaks apart.
+const defParas = Array.prototype.slice.call(d.querySelectorAll("#key-terms > p"))
+  .filter(p => !p.classList.contains("sa-intro"));
+check("at least 8 key-term definitions", defParas.length >= 8, String(defParas.length));
+check("every definition is a plain X-is-Y sentence",
+      defParas.every(p => /^[A-Z][a-z]+ (is|are|refers to|means) /.test(p.textContent.trim())));
+check("no definition carries inline markup (would break the sentence shape)",
+      defParas.every(p => p.children.length === 0));
+const defRe = /<p[^>]*>[A-Z][a-z]+ (?:is|are|refers to|means)[^<]{20,140}<\/p>/g;
+check("source-level definition regex finds >= 8",
+      (source.match(defRe) || []).length >= 8, String((source.match(defRe) || []).length));
+
+// ---- question-shaped headings
+const qHeadRe = /<h[2-4][^>]*>[^<]*\?[^<]*<\/h[2-4]>/g;
+check("at least 5 question-shaped headings",
+      (source.match(qHeadRe) || []).length >= 5, String((source.match(qHeadRe) || []).length));
+
+// ---- the new chrome translates; the answers stay English like the articles
+setLang(dom, "zh");
+check("nav label translates", key(dom, "faq") === "常见问题", key(dom, "faq"));
+check("FAQ heading translates", /产线/.test(key(dom, "faq-title") || ""), key(dom, "faq-title"));
+check("key-terms heading translates", key(dom, "key-terms") === "术语", key(dom, "key-terms"));
+check("FAQ questions heading translates", key(dom, "faq-questions") === "常见问题解答", key(dom, "faq-questions"));
+setLang(dom, "en");
+check("FAQ heading restores to English",
+      key(dom, "faq-title") === "Questions asked before a line is specified", key(dom, "faq-title"));
+
+/* ------------------------------------------------------------------ */
 console.log("\nPASSED: " + pass + "   FAILED: " + fail);
 process.exit(fail === 0 ? 0 : 1);

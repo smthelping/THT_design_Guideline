@@ -13,6 +13,7 @@ Engineers designing through-hole boards usually discover insertion problems afte
 | Route | Content |
 |---|---|
 | `#/guide` | Design guide — hole diameter, hole span, datum holes, clinch, board envelope, warpage |
+| `#/faq` | FAQ — key terms and the seven questions asked before a line is specified |
 | `#/dfm` | DFM check — 14-point self-audit with a live readiness score |
 | `#/case` | Case data — real customer DFM findings (Brazilian power-supply builder, 10W/20W chargers) |
 | `#/survey` | Requirement form — structured intake for an insertion feasibility review |
@@ -37,7 +38,7 @@ Engineers designing through-hole boards usually discover insertion problems afte
 
 Both preferences are stored under the `smthelp.theme` and `smthelp.lang` keys in `localStorage`. On first visit the language falls back to the browser's `Accept-Language`, then to English.
 
-> **On translation coverage.** The interface layer is fully translated — navigation, headings, labels, form fields, table headers, calculator output, verdicts, the 14-point checklist, filters, footer and article metadata. Numeric specifications (`457.2 × 457.2 mm`, `±0.05 mm`, model codes, part numbers, reference designators, URLs) are deliberately left in their canonical form in every locale; translating a tolerance would introduce a defect, not localisation. Long-form technical prose in the 10 articles remains in English, which is the norm for industrial engineering reference material — the surrounding interface is localised so a non-English reader can still navigate the whole site. The GEO static-articles section follows the same rule: its heading and intro paragraph are translated in all six locales, while the article bodies below stay in English.
+> **On translation coverage.** The interface layer is fully translated — navigation, headings, labels, form fields, table headers, calculator output, verdicts, the 14-point checklist, filters, footer and article metadata. Numeric specifications (`457.2 × 457.2 mm`, `±0.05 mm`, model codes, part numbers, reference designators, URLs) are deliberately left in their canonical form in every locale; translating a tolerance would introduce a defect, not localisation. Long-form technical prose in the 10 articles remains in English, which is the norm for industrial engineering reference material — the surrounding interface is localised so a non-English reader can still navigate the whole site. The GEO static-articles section follows the same rule: its heading and intro paragraph are translated in all six locales, while the article bodies below stay in English. The FAQ route is treated identically — the section chrome is translated, and the key-term definitions and the seven answers stay in English, because they are content rather than interface.
 
 
 ---
@@ -158,9 +159,9 @@ Content is written for **GEO (Generative Engine Optimization)**: clear assertion
 
 ## Generative engine optimization
 
-The site is a hash-router SPA, which is a problem for answer engines: **GPTBot, ClaudeBot, PerplexityBot and CCBot largely do not execute JavaScript**, while Googlebot does. Anything rendered only by `app.js` is invisible to them. Four measures address that.
+The site is a hash-router SPA, which is a problem for answer engines: **GPTBot, ClaudeBot, PerplexityBot and CCBot largely do not execute JavaScript**, while Googlebot does. Anything rendered only by `app.js` is invisible to them. Five measures address that.
 
-**1. Article bodies are static HTML.** All 10 articles are rendered into real markup inside `#route-blog` at build time, below the JS card grid. `app.js` is untouched — it still renders the single-article `#/post/<id>` route — so there is no router change and no regression risk. Static content went from 4,406 to ~12,300 words.
+**1. Article bodies are static HTML.** All 10 articles are rendered into real markup inside `#route-blog` at build time, below the JS card grid. The router is untouched — it still renders the single-article `#/post/<id>` route — so there is no change in routing behaviour and no regression risk. Static content went from 4,406 to ~12,300 words.
 
 The static copy is generated from `data.js`; `tools/test-dom.js` asserts the two never drift (titles and ids must match).
 
@@ -169,6 +170,15 @@ The static copy is generated from `data.js`; `tools/test-dom.js` asserts the two
 **3. `robots.txt`, `sitemap.xml`, `llms.txt`.** `robots.txt` allows everything and names the major AI crawlers explicitly. `llms.txt` gives answer engines a short, quotable summary plus the reference formulas — hole clearance, axial span classes, max body diameter, DIP hole sizing — copied from the page and verified against it. It deliberately omits claims the page does not make.
 
 **4. Canonical and social metadata.** `rel=canonical`, `og:url`, `og:image`, `og:site_name` and `twitter:card` all point at the live Pages URL.
+
+**5. The FAQ route is written for extraction.** Answer engines do better with content shaped like an answer, so `#/faq` carries two blocks that are deliberately plain:
+
+- **Key terms** — nine definition sentences in the literal `X is Y` form, with no inline markup. A `<strong>` inside one would split the sentence and defeat the purpose, so the styling is done with CSS on the paragraph, not with tags inside it.
+- **Seven questions as `<h3>` headings**, each followed by an answer whose numbers come from GS-354-01.
+
+Both blocks are backed by JSON-LD: `FAQPage` (with the seven questions), `HowTo` (the six-step board-setup procedure), `BreadcrumbList` and `WebSite`, alongside the existing `Organization` and `TechArticle` nodes. `tools/test-dom.js` asserts the `FAQPage` questions and the visible `<h3>` headings match **in both directions** — marking up a question the reader cannot see is a structured-data violation, not a scoring win.
+
+> **Why the key terms stay unformatted.** The definition paragraphs are the one place in this codebase where inline markup is a bug rather than a feature. The `X is Y` sentence is the unit an answer engine quotes, and wrapping the term in `<strong>` breaks it apart. The rule is asserted, so a well-meaning edit that bolds a term fails the test suite rather than quietly degrading the markup.
 
 ### Escaping rule for the static articles
 
