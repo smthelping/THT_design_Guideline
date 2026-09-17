@@ -77,6 +77,16 @@ This means the app deploys to GitHub Pages by pushing, and can be edited by anyo
 └── README.md
 ```
 
+Build-time generators and the domain/deploy gates live **outside** this directory, in the sibling `_build/tht-design-guide/` — they rewrite files here, so they are deliberately not deployed. Paths of the form `_build/tht-design-guide/…` in this document are relative to the workspace root (`Through Hole Technology/`).
+
+`tools/test-dom.js` is the only file that needs a dependency. It resolves `jsdom` from the managed Node workspace rather than a local `node_modules`, so run it with `NODE_PATH` set:
+
+```bash
+NODE_PATH="C:/Users/Admin/.workbuddy-ai/binaries/node/workspace/node_modules" node tools/test-dom.js
+```
+
+Without it the run dies with `Cannot find module 'jsdom'` — which reads like a broken test but is only a missing environment variable.
+
 ### Separation of concerns
 
 `data.js` holds **content only** — image URLs, video IDs, catalog entries, and blog articles. `app.js` holds **behaviour only** — routing, rendering, and math. `ui.js` holds **preferences only** — theme and language. To add content, edit `data.js`; you should not need to touch `app.js`.
@@ -201,6 +211,51 @@ DNS lives in Cloudflare (`kirk` / `may.ns.cloudflare.com`):
 > The swap must not touch `youtube.com/c/Smthelping`, the repo path `smthelping/THT_design_Guideline`, or the `smthelping-channel` i18n key — all of which merely contain the string `smthelping`. The script matches the full origin+path so none of them can collide, and it verifies the YouTube link survived.
 
 > **Ordering.** Create the DNS record *before* pushing `CNAME`. Once Pages has a custom domain configured but DNS does not resolve, the `*.github.io` URL redirects to the dead host, so the site is briefly unreachable at both addresses.
+
+#### Verifying the cutover
+
+Three scripts in `_build/tht-design-guide/` cover the whole sequence. Run them in order; each exits non-zero on failure so they compose with `&&`.
+
+```bash
+# 1. pre-push gate — is the DNS record correct yet?
+node _build/tht-design-guide/check-domain.js <site-dir> dgl.smthelp.eu
+
+# 2. wait for the certificate, then assert HTTPS (run after pushing CNAME)
+node _build/tht-design-guide/check-domain.js <site-dir> dgl.smthelp.eu --require-https
+node _build/tht-design-guide/wait-for-domain.js dgl.smthelp.eu --minutes=15
+
+# 3. confirm the edge is serving THIS build, not a cached or fallback page
+node _build/tht-design-guide/verify-deployed.js <site-dir> https://dgl.smthelp.eu
+```
+
+A few things these exist to catch:
+
+- **A 200 is not proof.** GitHub Pages can serve a stale build or a fallback page and still return 200. `verify-deployed.js` compares bytes, which is the only real confirmation the push landed.
+- **CRLF.** `core.autocrlf=true` means the worktree holds CRLF while the repository — and therefore Pages — holds LF. Every local file is normalised before comparison, or all six files would report as different for no reason.
+- **The certificate cannot exist before the first push.** GitHub only requests a Let's Encrypt certificate once it knows it serves the host, so the HTTPS assertion is a warning until `--require-https` is passed. Before that point TLS fails with `schannel: failed to receive handshake` (curl 35) or `Empty reply from server` (curl 52) — both mean "not served yet", not "DNS is wrong".
+- **`--require-https` is a flag, not an argument.** `check-domain.js` takes `<site-dir> [domain]`, so it must be passed last: `check-domain.js <dir> dgl.smthelp.eu --require-https`. Passing it second makes the script treat the flag as the domain name.
+
+#### Enforce HTTPS
+
+`https_enforced` is a separate setting from the certificate. With it off, `http://dgl.smthelp.eu/` serves 200 directly instead of redirecting, so the site is reachable over plaintext while `canonical` advertises the HTTPS origin.
+
+The Pages API needs a token, which the credential manager already holds for pushes:
+
+```bash
+TOKEN=$(printf 'protocol=https\nhost=github.com\n\n' | git credential fill 2>/dev/null | sed -n 's/^password=//p')
+
+# read the current state — certificate should read "approved" first
+curl -sS -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
+  https://api.github.com/repos/smthelping/THT_design_Guideline/pages
+
+# enable it, echoing the existing config back so nothing is cleared
+curl -sS -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"cname":"dgl.smthelp.eu","build_type":"legacy","source":{"branch":"main","path":"/"},"https_enforced":true}' \
+  https://api.github.com/repos/smthelping/THT_design_Guideline/pages
+```
+
+`PUT /pages` replaces the configuration rather than merging into it, so the body has to carry `cname`, `build_type` and `source` as well — sending `https_enforced` alone can drop the custom domain. A `204` means success.
 
 ### Remotes
 
