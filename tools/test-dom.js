@@ -265,7 +265,7 @@ check("no element shows its raw key", leaks.length === 0, leaks.slice(0, 5).join
 check("no element left blank", empty.length === 0, empty.slice(0, 5).join(", "));
 
 /* ------------------------------------------------------------------ */
-section("12 - GEO static content survives JS boot (P0)");
+section("12 - GEO static content + custom domain (P0)");
 setLang(dom, "en");
 const cards = Array.prototype.slice.call(d.querySelectorAll("#blog-grid .blog-card"));
 const statics = Array.prototype.slice.call(d.querySelectorAll("#route-blog .static-article"));
@@ -305,13 +305,13 @@ check("robots.txt present", !!robots);
 check("robots.txt allows the major AI crawlers",
       ["GPTBot", "ClaudeBot", "PerplexityBot", "CCBot"].every(b => robots.indexOf(b) >= 0));
 check("robots.txt declares the sitemap", /Sitemap:\s*https:/.test(robots || ""));
-check("sitemap.xml present and points at the canonical host",
-      /smthelping\.github\.io\/THT_design_Guideline/.test(sitemap || ""));
+check("sitemap.xml present and uses the custom host",
+      /dgl\.smthelp\.eu/.test(sitemap || ""));
 check("llms.txt present", !!llms);
-check("canonical is the live Pages URL",
-      /<link rel="canonical" href="https:\/\/smthelping\.github\.io\/THT_design_Guideline\/"/.test(source));
-check("og:url matches the canonical",
-      /<meta property="og:url" content="https:\/\/smthelping\.github\.io\/THT_design_Guideline\/"/.test(source));
+check("canonical is the custom domain",
+      /<link rel="canonical" href="https:\/\/dgl\.smthelp\.eu\/"/.test(source));
+check("og:url matches canonical",
+      /<meta property="og:url" content="https:\/\/dgl\.smthelp\.eu\/"/.test(source));
 check("twitter:card present", /name="twitter:card"/.test(source));
 
 // Structured data: a bare TechArticle gives an answer engine no entity to attach
@@ -328,6 +328,30 @@ check("TechArticle declares datePublished + inLanguage",
 check("visible credentials: founded 2011 + 15 years + 5×",
       /\b2011\b/.test(source) && /\b15 years\b/.test(source) && /5×/.test(source));
 check("credentials paragraph is translatable", !!d.querySelector('[data-i18n="client-result-5x-throughput"]'));
+
+// Custom domain: CNAME is what GitHub Pages reads to know which host it serves,
+// while canonical/og:url/sitemap/robots/llms.txt are what crawlers read. If the
+// two ever disagree the site self-canonicalises to a host it does not serve.
+const cname = (read("CNAME") || "").trim();
+check("CNAME present", cname.length > 0, JSON.stringify(cname));
+check("CNAME is a bare host (no scheme, no path)",
+      /^[a-z0-9.-]+\.[a-z]{2,}$/.test(cname), JSON.stringify(cname));
+if (cname) {
+  const origin = "https://" + cname;
+  check("canonical matches the CNAME host",
+        source.indexOf('<link rel="canonical" href="' + origin + '/">') >= 0, origin);
+  check("og:url matches the CNAME host",
+        source.indexOf('property="og:url" content="' + origin + '/"') >= 0, origin);
+  check("sitemap uses the CNAME host", (read("sitemap.xml") || "").indexOf(origin) >= 0);
+  check("robots.txt sitemap line uses the CNAME host",
+        new RegExp("Sitemap:\\s*" + origin.replace(/\./g, "\\.") + "/").test(read("robots.txt") || ""));
+  check("llms.txt Source uses the CNAME host", (read("llms.txt") || "").indexOf("Source: " + origin) >= 0);
+  check("JSON-LD @id uses the CNAME host", source.indexOf('"@id": "' + origin + '/#organization"') >= 0);
+  check("no stale github.io origin left in the page",
+        !/smthelping\.github\.io/.test(source) && !/smthelping\.github\.io/.test(read("sitemap.xml") || ""));
+}
+check("YouTube channel link is not clobbered by the domain swap",
+      /youtube\.com\/c\/Smthelping/.test(source));
 
 // the new section chrome must translate like everything else
 setLang(dom, "zh");

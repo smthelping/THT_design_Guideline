@@ -55,6 +55,7 @@ This means the app deploys to GitHub Pages by pushing, and can be edited by anyo
 ```
 .
 ├── index.html              # markup + all static route content + 10 static articles + JSON-LD
+├── CNAME                   # custom domain GitHub Pages serves (dgl.smthelp.eu)
 ├── robots.txt              # crawler policy — explicit allow for the major AI crawlers
 ├── sitemap.xml             # single-URL sitemap for the canonical
 ├── llms.txt                # machine-readable summary + verified reference formulas
@@ -102,7 +103,7 @@ Run from the repository root:
 
 ```bash
 node tools/qa-i18n.js                 # translation audit, no dependencies
-node tools/geo-check.js . https://smthelping.github.io/THT_design_Guideline
+node tools/geo-check.js . https://dgl.smthelp.eu
 NODE_PATH=<dir-with-jsdom> node tools/test-dom.js
 ```
 
@@ -178,7 +179,30 @@ Opening `index.html` directly from disk also works, except the Chatwoot widget (
 
 ## Deploy
 
-Live at **<https://smthelping.github.io/THT_design_Guideline/>** — GitHub Pages, `main` branch, root folder.
+Live at **<https://dgl.smthelp.eu/>** — GitHub Pages, `main` branch, root folder.
+
+### Custom domain
+
+The `CNAME` file at the repository root holds the bare host `dgl.smthelp.eu`. GitHub Pages reads it to decide which host it serves, and the apex/`*.github.io` URLs then 301-redirect to it.
+
+DNS lives in Cloudflare (`kirk` / `may.ns.cloudflare.com`):
+
+| Type | Name | Target | Proxy |
+|---|---|---|---|
+| `CNAME` | `dgl` | `smthelping.github.io` | **DNS only (grey cloud)** |
+
+> **Keep the proxy off.** A grey-cloud record lets GitHub Pages issue and renew its own Let's Encrypt certificate, so `Enforce HTTPS` works. It also avoids Cloudflare's bot management sitting between AI crawlers and the site — `GPTBot`, `ClaudeBot` and `PerplexityBot` are exactly the clients the GEO work targets, and a bot challenge would silently undo it.
+
+> **CNAME and canonical must agree.** `CNAME` tells GitHub which host to serve; `canonical` / `og:url` / `sitemap.xml` / `robots.txt` / `llms.txt` tell crawlers which host is authoritative. If they drift, the site self-canonicalises to a host it does not serve. `tools/test-dom.js` asserts they match, so a domain change is a one-command change:
+> ```bash
+> node _build/tht-design-guide/patch-custom-domain.js <site-dir>            # apply
+> node _build/tht-design-guide/patch-custom-domain.js <site-dir> --revert   # undo
+> ```
+> The swap must not touch `youtube.com/c/Smthelping`, the repo path `smthelping/THT_design_Guideline`, or the `smthelping-channel` i18n key — all of which merely contain the string `smthelping`. The script matches the full origin+path so none of them can collide, and it verifies the YouTube link survived.
+
+> **Ordering.** Create the DNS record *before* pushing `CNAME`. Once Pages has a custom domain configured but DNS does not resolve, the `*.github.io` URL redirects to the dead host, so the site is briefly unreachable at both addresses.
+
+### Remotes
 
 Two remotes, because the working copy is a fork:
 
@@ -198,6 +222,8 @@ Then open a PR from `smthelping:main` into `smthelp111:main` so the parent picks
 Pages is configured under **Settings → Pages → Source: Deploy from a branch → `main` / `(root)`** on the fork.
 
 > **Why not push to the parent directly?** The local Git credential identity (`smthelping`) has read-only access to `smthelp111/*`. A fork is not a write grant on the parent — the two are unrelated permissions.
+
+> **⚠️ Only one repository can claim a custom domain.** Because `CNAME` is committed, merging the PR into the parent copies it there too. If the parent ever enables Pages, the two repositories will fight over `dgl.smthelp.eu` and one will lose the domain. Decide which repository owns the domain before merging.
 
 > **Comparing against the live site.** GitHub Pages serves the files byte-for-byte. The built-in share link injects a ~575-byte platform beacon into `index.html`, so a byte comparison against Pages is the reliable way to confirm what is actually deployed.
 

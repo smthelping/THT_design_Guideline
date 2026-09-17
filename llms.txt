@@ -6,7 +6,7 @@
 > auto-insertion readiness checklist. Published by Southern Machinery, a Shenzhen-based
 > designer and manufacturer of SMT and THT assembly equipment, founded in 2011.
 
-Source: https://smthelping.github.io/THT_design_Guideline/
+Source: https://dgl.smthelp.eu/
 Language: English (interface also available in Spanish, Portuguese, French, Arabic, Russian, Chinese)
 Last updated: 2026-09-17
 

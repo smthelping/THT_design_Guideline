@@ -1,5 +1,5 @@
 # robots.txt — THT Design Guide (Southern Machinery / SMThelp)
-# https://smthelping.github.io/THT_design_Guideline/
+# https://dgl.smthelp.eu/
 
 User-agent: *
 Allow: /
@@ -38,4 +38,4 @@ Allow: /
 User-agent: Bytespider
 Allow: /
 
-Sitemap: https://smthelping.github.io/THT_design_Guideline/sitemap.xml
+Sitemap: https://dgl.smthelp.eu/sitemap.xml
