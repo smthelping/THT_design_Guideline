@@ -1,0 +1,41 @@
+# robots.txt — THT Design Guide (Southern Machinery / SMThelp)
+# https://smthelping.github.io/THT_design_Guideline/
+
+User-agent: *
+Allow: /
+
+# ---- AI / answer engines: explicitly welcome ----
+# GEO note: these crawlers generally do NOT execute JavaScript, which is why the
+# full article text is rendered as static HTML rather than built at runtime.
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+Sitemap: https://smthelping.github.io/THT_design_Guideline/sitemap.xml

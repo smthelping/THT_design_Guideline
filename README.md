@@ -37,7 +37,7 @@ Engineers designing through-hole boards usually discover insertion problems afte
 
 Both preferences are stored under the `smthelp.theme` and `smthelp.lang` keys in `localStorage`. On first visit the language falls back to the browser's `Accept-Language`, then to English.
 
-> **On translation coverage.** The interface layer is fully translated — navigation, headings, labels, form fields, table headers, calculator output, verdicts, the 14-point checklist, filters, footer and article metadata. Numeric specifications (`457.2 × 457.2 mm`, `±0.05 mm`, model codes, part numbers, reference designators, URLs) are deliberately left in their canonical form in every locale; translating a tolerance would introduce a defect, not localisation. Long-form technical prose in the 10 articles remains in English, which is the norm for industrial engineering reference material — the surrounding interface is localised so a non-English reader can still navigate the whole site.
+> **On translation coverage.** The interface layer is fully translated — navigation, headings, labels, form fields, table headers, calculator output, verdicts, the 14-point checklist, filters, footer and article metadata. Numeric specifications (`457.2 × 457.2 mm`, `±0.05 mm`, model codes, part numbers, reference designators, URLs) are deliberately left in their canonical form in every locale; translating a tolerance would introduce a defect, not localisation. Long-form technical prose in the 10 articles remains in English, which is the norm for industrial engineering reference material — the surrounding interface is localised so a non-English reader can still navigate the whole site. The GEO static-articles section follows the same rule: its heading and intro paragraph are translated in all six locales, while the article bodies below stay in English.
 
 
 ---
@@ -54,9 +54,12 @@ This means the app deploys to GitHub Pages by pushing, and can be edited by anyo
 
 ```
 .
-├── index.html              # markup + all static route content + JSON-LD
+├── index.html              # markup + all static route content + 10 static articles + JSON-LD
+├── robots.txt              # crawler policy — explicit allow for the major AI crawlers
+├── sitemap.xml             # single-URL sitemap for the canonical
+├── llms.txt                # machine-readable summary + verified reference formulas
 ├── assets/
-│   ├── css/style.css       # brand design system + dark theme + RTL
+│   ├── css/style.css       # brand design system + dark theme + RTL + static-article styles
 │   └── js/
 │       ├── ui.js           # theme + language controller (persistence, RTL)
 │       ├── data.js         # IMG / VIDEOS / CATALOG / BLOGS content layer
@@ -67,7 +70,8 @@ This means the app deploys to GitHub Pages by pushing, and can be edited by anyo
 │           └── es|pt|fr|ar|ru|zh.js   # DOM text per locale
 ├── tools/
 │   ├── test-dom.js         # jsdom end-to-end test (needs jsdom)
-│   └── qa-i18n.js          # translation audit (no dependencies)
+│   ├── qa-i18n.js          # translation audit (no dependencies)
+│   └── geo-check.js        # 6-dimension generative-engine readiness score (no dependencies)
 ├── .nojekyll               # serve files as-is on GitHub Pages
 └── README.md
 ```
@@ -86,17 +90,19 @@ To add a locale: add the entry to `LANGS` in `ui.js`, create `assets/js/i18n/<co
 
 **Convention — units belong in the translation, not in `data.js`.** `data.js` stores bare values (`read: 7`), and each locale's template supplies the wording (`"{n} min read"`, `"阅读 {n} 分钟"`). Putting `"7 min"` in the data layer would ship the English unit into all six other locales. The same rule applies to any future unit-bearing field.
 
-**Verification.** Two harnesses in `tools/` cover this:
+**Verification.** Three harnesses in `tools/` cover this:
 
 | Script | Checks | Needs |
 |---|---|---|
-| `tools/test-dom.js` | jsdom end-to-end run of the real markup + scripts: default state, lazy `#/media` route rendering, theme toggle + persistence, language switch, JS-rendered content rebuild, tick-state survival, reload persistence, all 7 locales, and zero uncaught errors. | `jsdom` |
+| `tools/test-dom.js` | jsdom end-to-end run of the real markup + scripts (100 assertions): default state, lazy `#/media` route rendering, theme toggle + persistence, language switch, JS-rendered content rebuild, tick-state survival, reload persistence, all 7 locales, zero uncaught errors, and the GEO static-content guards. | `jsdom` |
 | `tools/qa-i18n.js` | Static scan of every locale for placeholder mismatches, blank values, degenerate templates, missing target script, and Latin residue. | none |
+| `tools/geo-check.js` | Scores generative-engine readiness across six dimensions (crawlability, structured data, citability, entity, multilingual, technical) and verifies `robots.txt` / `sitemap.xml` / `llms.txt` and the canonical are reachable when given a base URL. | none |
 
 Run from the repository root:
 
 ```bash
 node tools/qa-i18n.js                 # translation audit, no dependencies
+node tools/geo-check.js . https://smthelping.github.io/THT_design_Guideline
 NODE_PATH=<dir-with-jsdom> node tools/test-dom.js
 ```
 
@@ -135,7 +141,27 @@ NODE_PATH=<dir-with-jsdom> node tools/test-dom.js
 
 The 10 articles follow a six-stage structure — hook, problem framing, mechanism, product context, reinforcement, and call to action — applied as an **internal drafting discipline**. Those stage names are deliberately kept out of the published titles so readers see engineering substance rather than content-marketing scaffolding.
 
-Content is written for **GEO (Generative Engine Optimization)**: clear assertions, concrete numbers, and structured facts that language models can quote accurately. The page carries `TechArticle` JSON-LD so search and AI engines can parse the topic, audience, and author.
+Content is written for **GEO (Generative Engine Optimization)**: clear assertions, concrete numbers, and structured facts that language models can quote accurately. The page carries `TechArticle` JSON-LD so search and AI engines can parse the topic, audience, and author. See the next section for how that content is made readable to crawlers that do not run JavaScript.
+
+---
+
+## Generative engine optimization
+
+The site is a hash-router SPA, which is a problem for answer engines: **GPTBot, ClaudeBot, PerplexityBot and CCBot largely do not execute JavaScript**, while Googlebot does. Anything rendered only by `app.js` is invisible to them. Four measures address that.
+
+**1. Article bodies are static HTML.** All 10 articles are rendered into real markup inside `#route-blog` at build time, below the JS card grid. `app.js` is untouched — it still renders the single-article `#/post/<id>` route — so there is no router change and no regression risk. Static content went from 4,406 to ~12,300 words.
+
+The static copy is generated from `data.js`; `tools/test-dom.js` asserts the two never drift (titles and ids must match).
+
+**2. A `<noscript>` fallback, because hidden text is worse than no text.** Every route is `display: none` until the hash router activates one. Without JavaScript the page would therefore render **empty** — so simply adding static articles would have shipped content that only crawlers could see, which is cloaking. A single `<noscript>` rule reveals all routes, making the static copy genuinely readable.
+
+**3. `robots.txt`, `sitemap.xml`, `llms.txt`.** `robots.txt` allows everything and names the major AI crawlers explicitly. `llms.txt` gives answer engines a short, quotable summary plus the reference formulas — hole clearance, axial span classes, max body diameter, DIP hole sizing — copied from the page and verified against it. It deliberately omits claims the page does not make.
+
+**4. Canonical and social metadata.** `rel=canonical`, `og:url`, `og:image`, `og:site_name` and `twitter:card` all point at the live Pages URL.
+
+### Escaping rule for the static articles
+
+`data.js` stores inline `<strong>` / `<em>` / `<code>` inside paragraph and list blocks, and `app.js` injects those with `innerHTML`. The static generator must therefore **mirror `blockHTML()` exactly** — paragraphs, `p2`, `p3`, `ul` and `ol` stay raw; headings, code blocks and table cells are escaped. Escaping the prose "for safety" ships literal `&lt;strong&gt;` text to every reader.
 
 ---
 
@@ -152,15 +178,28 @@ Opening `index.html` directly from disk also works, except the Chatwoot widget (
 
 ## Deploy
 
-GitHub Pages, `main` branch, root folder:
+Live at **<https://smthelping.github.io/THT_design_Guideline/>** — GitHub Pages, `main` branch, root folder.
+
+Two remotes, because the working copy is a fork:
+
+| Remote | Repository | Role |
+|---|---|---|
+| `origin` | `smthelping/THT_design_Guideline` | where pushes land; Pages serves from here |
+| `upstream` | `smthelp111/THT_design_Guideline` | the parent repository; changes go in as a pull request |
 
 ```bash
 git add -A
-git commit -m "THT Design Guide web app"
-git push origin main
+git commit -m "…"
+git push origin main          # -> fork; Pages redeploys automatically
 ```
 
-Then **Settings → Pages → Source: Deploy from a branch → `main` / `(root)`**.
+Then open a PR from `smthelping:main` into `smthelp111:main` so the parent picks the change up. Pushing to the fork branch updates an already-open PR automatically.
+
+Pages is configured under **Settings → Pages → Source: Deploy from a branch → `main` / `(root)`** on the fork.
+
+> **Why not push to the parent directly?** The local Git credential identity (`smthelping`) has read-only access to `smthelp111/*`. A fork is not a write grant on the parent — the two are unrelated permissions.
+
+> **Comparing against the live site.** GitHub Pages serves the files byte-for-byte. The built-in share link injects a ~575-byte platform beacon into `index.html`, so a byte comparison against Pages is the reliable way to confirm what is actually deployed.
 
 ---
 

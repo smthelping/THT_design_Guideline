@@ -59,8 +59,11 @@ const degenerate = (e, v) => {
   const le = literal(e), lv = literal(v);
   return le.length >= 2 && /[A-Za-z]{2,}/.test(le) && lv.length === 0;
 };
-// Brand names / platform names that correctly stay in Latin script.
-const BRANDS = /\b(Panasonic|Yamaha|Fuji|JUKI|Samsung|Hitachi|ASM|Siemens|Hanwha|YouTube|pallet|PCB|SMT|THT|LED|SMD|DIP|USB|CAD|Gerber|Excel|CSV|Open|Chatwoot|LinkedIn|Twitter|Facebook|WhatsApp)\b/i;
+// Terms that correctly stay in Latin script: brands, platform names, and
+// standard technology / industry acronyms. A hit here means the translation is
+// right and the checker is wrong — extend this list rather than "fixing" a
+// translation that legitimately keeps the term.
+const BRANDS = /\b(Panasonic|Yamaha|Fuji|JUKI|Samsung|Hitachi|ASM|Siemens|Hanwha|Sanyo|Mirae|Casio|Assembleon|Sony|Universal|YouTube|Google|Chatwoot|LinkedIn|Twitter|Facebook|WhatsApp|JavaScript|TypeScript|HTML|CSS|JSON|XML|HTTP|HTTPS|URL|API|PDF|CSV|Excel|Gerber|DXF|Open|pallet|PCB|SMT|THT|LED|SMD|DIP|USB|CAD|ROI|CPH|UPH|ESD|PPU|DFM|FAQ|IPC|J-STD|IEC|AMR|BHS|SBT)\b/i;
 
 LANGS.forEach(L => {
   const dom = loadFile("assets/js/i18n/" + L + ".js", "I18N")[L] || {};

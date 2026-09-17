@@ -265,5 +265,79 @@ check("no element shows its raw key", leaks.length === 0, leaks.slice(0, 5).join
 check("no element left blank", empty.length === 0, empty.slice(0, 5).join(", "));
 
 /* ------------------------------------------------------------------ */
+section("12 - GEO static content survives JS boot (P0)");
+setLang(dom, "en");
+const cards = Array.prototype.slice.call(d.querySelectorAll("#blog-grid .blog-card"));
+const statics = Array.prototype.slice.call(d.querySelectorAll("#route-blog .static-article"));
+check("blog grid rendered 10 cards", cards.length === 10, String(cards.length));
+check("10 static articles present in the DOM after boot", statics.length === 10, String(statics.length));
+
+// The static copy is generated from data.js at build time. If the two ever
+// drift, crawlers would index text that no longer matches the site.
+const cardTitles = cards.map(c => c.querySelector("h3").textContent.trim()).sort();
+const staticTitles = statics.map(a => a.querySelector("h3").textContent.trim()).sort();
+check("static titles match data.js titles", JSON.stringify(cardTitles) === JSON.stringify(staticTitles),
+      staticTitles.filter(t => cardTitles.indexOf(t) < 0).slice(0, 3).join(" | "));
+const cardIds = cards.map(c => c.getAttribute("data-id")).sort();
+const staticIds = statics.map(a => a.id.replace(/^article-/, "")).sort();
+check("static ids match data.js ids", JSON.stringify(cardIds) === JSON.stringify(staticIds),
+      staticIds.filter(i => cardIds.indexOf(i) < 0).slice(0, 3).join(" | "));
+
+// app.js renders p/ul/ol with innerHTML because data.js carries inline <strong>.
+// Over-escaping here would ship literal "&lt;strong&gt;" text to every reader.
+check("inline markup rendered, not escaped", !/&lt;(strong|em|code)&gt;/.test(source));
+check("article bodies contain real <strong> markup",
+      statics.some(a => a.querySelector("strong")), String(statics.filter(a => a.querySelector("strong")).length));
+check("static articles use h3 (outline h2 > h3 > h4, no skips)",
+      statics.every(a => a.querySelector("h3")) && statics.every(a => a.querySelector("h4")));
+check("static articles carry topic + keywords", statics.every(a => a.querySelector(".sa-topic")) &&
+      statics.every(a => /Keywords/i.test(a.textContent)));
+check("no duplicate body text (excerpt not repeated)", !/Most THT automation projects fail[\s\S]*Most THT automation projects fail/.test(source));
+
+// Without JS every .route is display:none, so the noscript rule is what makes
+// this content genuinely readable instead of hidden text.
+check("noscript reveals routes when JS is off",
+      /<noscript><style>\.route\{display:block/.test(source));
+
+// crawler files
+const robots = read("robots.txt"), sitemap = read("sitemap.xml"), llms = read("llms.txt");
+check("robots.txt present", !!robots);
+check("robots.txt allows the major AI crawlers",
+      ["GPTBot", "ClaudeBot", "PerplexityBot", "CCBot"].every(b => robots.indexOf(b) >= 0));
+check("robots.txt declares the sitemap", /Sitemap:\s*https:/.test(robots || ""));
+check("sitemap.xml present and points at the canonical host",
+      /smthelping\.github\.io\/THT_design_Guideline/.test(sitemap || ""));
+check("llms.txt present", !!llms);
+check("canonical is the live Pages URL",
+      /<link rel="canonical" href="https:\/\/smthelping\.github\.io\/THT_design_Guideline\/"/.test(source));
+check("og:url matches the canonical",
+      /<meta property="og:url" content="https:\/\/smthelping\.github\.io\/THT_design_Guideline\/"/.test(source));
+check("twitter:card present", /name="twitter:card"/.test(source));
+
+// Structured data: a bare TechArticle gives an answer engine no entity to attach
+// the facts to, so the Organization node carries foundingDate + sameAs + url.
+check("Organization node declares foundingDate", /"foundingDate":\s*"2011"/.test(source));
+check("Organization node declares url", /"@type":\s*"Organization"[\s\S]{0,600}?"url":/.test(source));
+check("Organization node declares sameAs social profiles",
+      (source.match(/"sameAs":\s*\[([\s\S]*?)\]/) || [])[1] &&
+      ((source.match(/"sameAs":\s*\[([\s\S]*?)\]/)[1].match(/https:/g) || []).length >= 5));
+check("TechArticle declares datePublished + inLanguage",
+      /"datePublished"/.test(source) && /"inLanguage":\s*"en"/.test(source));
+
+// The page must state the credentials that llms.txt quotes, or the two disagree.
+check("visible credentials: founded 2011 + 15 years + 5×",
+      /\b2011\b/.test(source) && /\b15 years\b/.test(source) && /5×/.test(source));
+check("credentials paragraph is translatable", !!d.querySelector('[data-i18n="client-result-5x-throughput"]'));
+
+// the new section chrome must translate like everything else
+setLang(dom, "zh");
+check("static-articles heading translates", key(dom, "full-articles") === "完整文章", key(dom, "full-articles"));
+check("static-articles intro translates", /静态 HTML/.test(key(dom, "full-articles-intro") || ""),
+      key(dom, "full-articles-intro"));
+setLang(dom, "en");
+check("static-articles heading restores to English", key(dom, "full-articles") === "Full articles",
+      key(dom, "full-articles"));
+
+/* ------------------------------------------------------------------ */
 console.log("\nPASSED: " + pass + "   FAILED: " + fail);
 process.exit(fail === 0 ? 0 : 1);

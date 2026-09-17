@@ -1,0 +1,82 @@
+# THT Design Guide — Southern Machinery (SMThelp)
+
+> Through-hole (THT) auto insertion PCB design guidelines: hole diameter, hole span,
+> datum holes, clinch specification, warpage limits, and DIP insertion rules for radial,
+> axial and odd-form components. Includes live DFM calculators and a 14-point
+> auto-insertion readiness checklist. Published by Southern Machinery, a Shenzhen-based
+> designer and manufacturer of SMT and THT assembly equipment, founded in 2011.
+
+Source: https://smthelping.github.io/THT_design_Guideline/
+Language: English (interface also available in Spanish, Portuguese, French, Arabic, Russian, Chinese)
+Last updated: 2026-09-17
+
+## Core reference data
+
+### Hole diameter
+- Guided insertion (lead captured by the insertion tooling):
+  `Hole diameter = Maximum lead diameter + 0.48 mm ± 0.08 mm` (0.019 in ± 0.003 in)
+- Unguided insertion:
+  `Hole diameter = Maximum lead diameter + 0.58 mm ± 0.08 mm`
+- Maximum lead diameter is the **diagonal of the lead cross-section**, not its width:
+  `C = √(A² + B²)`. Example: a 0.64 mm × 0.38 mm rectangular lead gives C = 0.74 mm.
+- Undersized holes cause insertion faults and mis-seating; oversized holes let the component
+  sit loose, the clinch has nothing to bite against, and parts drop out during wave soldering.
+
+### Axial lead span (minimum insertion hole span)
+Four tooling families, four formulas — `span = [(Body length × factor) + constant] − Lead diameter`:
+- Standard tooling: `[(Body length × 1.112) + 2.36 mm] − Lead diameter`
+- Large lead tooling: `[(Body length × 1.085) + 4.11 mm] − Lead diameter`
+- 5 mm tooling: `[(Body length × 1.109) + 1.40 mm] − Lead diameter`
+- 5.5 mm tooling: `[(Body length × 1.067) + 2.30 mm] − Lead diameter`
+- Non-symmetrical components: subtract a further **0.41 mm (0.016 in)** from the maximum
+  body length before applying the formula.
+- Use the **maximum** body length, not the nominal — vendors change body dimensions between
+  production lots without changing the part number.
+
+### Maximum body diameter
+- `Max body diameter = Fixed form length − (2 × board thickness)`
+- Form length is 10.69 mm (0.420 in) for standard, high-density and large-lead tooling;
+  11.68 mm (0.460 in) for 5 mm and 5.5 mm tooling.
+- Worked example: 1.57 mm board, standard tooling → `10.69 − (2 × 1.57) = 7.55 mm`
+
+### DIP insertion
+- `Minimum hole diameter = Maximum lead diameter + Hole location tolerance + 0.25 mm (0.010 in)`
+
+## Site structure
+- **Design Guide** — full DFM rules for board, axial, radial and DIP insertion, with 11 reference tables
+- **DFM Check** — 14-point auto-insertion readiness checklist with live scoring
+- **Case Data** — project requirement form used in field evaluation
+- **Insights** — 10 technical articles, full text published as static HTML
+- **Videos & Catalog** — 30 machine videos and 20 product catalogs
+- **ROI Tools** — four DFM calculators (hole diameter, axial span, radial pitch, body diameter)
+
+## Technical articles
+1. Why layout, not equipment, decides the outcome
+2. Hole diameter: one number, two failure modes
+3. Pitch adaptation
+4. Axial lead length and body space
+5. Clinch angle
+6. DIP sockets
+7. Warped panel
+8. Datum holes
+9. Odd-form insertion warning signs
+10. Charger line audit
+
+## Company
+- **Southern Machinery Sales And Service Co Limited** (brand: SMThelp)
+- Shenzhen, Guangdong, China — founded 2011
+- Designs and manufactures SMT and THT machines for the Smart EMS factory
+- Capability: radial · axial · odd-form · terminal & riveting · board handling · wave & selective soldering
+- **50+ machines shipped overseas since 2009**, covering Brazil, India, Malaysia, Indonesia,
+  Thailand, Turkey, Saudi Arabia, Ecuador, Colombia and Argentina
+- A US LED display manufacturer achieved **5× the throughput of manual assembly** after
+  automating radial insertion with Southern Machinery equipment (2022)
+- Feeders, nozzles and gripper tooling are designed and manufactured in-house
+- Contact: info@smthelp.com · https://wa.me/8613602562576 · https://www.smthelp.com
+
+## Optional
+- Machine catalog: https://file.autoinsertion.com
+- Machine photos: https://ph.smthelp.com
+- LinkedIn (company): https://www.linkedin.com/company/smtmachine
+- LinkedIn (profile): https://cn.linkedin.com/in/smtsupplier
+- YouTube: https://www.youtube.com/c/Smthelping

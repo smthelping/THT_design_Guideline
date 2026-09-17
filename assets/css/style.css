@@ -373,6 +373,22 @@ td.num, th.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .toc ol { margin: 0; padding-inline-start: 20px; }
 .toc li { font-size: 14px; margin-bottom: 4px; }
 
+/* ---------- Static (crawler-readable) articles ----------
+   The full text of every article is rendered into #route-blog as real HTML so
+   search engines and AI answer engines can read it without executing JS.
+   Section headings are <h4> (article title is <h3>) to keep the outline correct,
+   so they are styled here to match the <h2> look used by the JS-rendered view. */
+.static-articles { margin-top: 62px; }
+.static-articles > h2 { font-size: 22px; letter-spacing: -.015em; margin: 0 0 8px; }
+.sa-intro { font-size: 14.5px; color: var(--slate); max-width: 760px; margin: 0 0 8px; }
+.static-article { padding-top: 42px; margin-top: 42px; border-top: 1px solid var(--line); }
+.static-article > h3 { font-size: clamp(21px, 2.5vw, 28px); line-height: 1.25; letter-spacing: -.02em; margin: 0 0 8px; }
+.sa-topic { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--brand); margin: 0 0 12px; }
+.static-article h4 { font-size: 19px; margin: 34px 0 11px; letter-spacing: -.012em; padding-top: 18px; border-top: 1px solid var(--line); }
+.static-article h4:first-of-type { border-top: 0; padding-top: 0; margin-top: 26px; }
+.static-article p { font-size: 16.5px; margin: 0 0 15px; }
+.static-article li { font-size: 16px; }
+
 /* ---------- Steps / flow ---------- */
 .steps { display: grid; gap: 0; counter-reset: s; }
 .step {
